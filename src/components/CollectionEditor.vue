@@ -4,16 +4,11 @@
         {{ editMessage }}
 
         <div v-if="editedCount > 0">
-            <span>
-                Edited Items: {{ editedCount }}
-            </span>
-
             <button type="button"
                 class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
                 @click="updateCollectionList()">
-                Save
+                Save {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" : '') }}
             </button>
-
         </div>
 
         <teleport to="#columnsDropdown" v-if="elementExists">
@@ -142,11 +137,13 @@ function columnChangeHandler(updatedList: any) {
 }
 
 function editHandler(data: any) {
-    console.log("Edited", data.item_id);
-    editHistory.value.push(data);
-    editedData[data.item_id] = editedData[data.item_id] ? editedData[data.item_id] : {};
-    editedData[data.item_id][data.column_key] = data.new_value;
-    editedCount.value = Object.keys(editedData).length;
+    console.log("Edited", data);
+    if (data.old_value != data.new_value) {
+        editHistory.value.push(data);
+        editedData[data.item_id] = editedData[data.item_id] ? editedData[data.item_id] : {};
+        editedData[data.item_id][data.column_key] = data.new_value;
+        editedCount.value = Object.keys(editedData).length;
+    }
 }
 
 async function updateCollectionList() {
@@ -182,6 +179,7 @@ async function updateCollectionList() {
     editMessage.value = "All Records Updated Successfully!";
     window.setTimeout(function () {
         editMessage.value = '';
+        editedCount.value = 0;
     }, 3000);
     console.log('Updated Data pushed', updateData);
 
