@@ -13,11 +13,20 @@
                 </select>
             </span>
             <span v-else-if="props.item_type == 'Image'">
-                <img :src="displayValue.url" class="w-20">
+                <img :src="displayValue?.url" class="w-20">
             </span>
-            <span v-else-if="props.item_type == 'RichText'">
+            <span v-else-if="props.item_type == 'RichText'"  class="break-words">
                 <div v-html="renderedContent"></div>
             </span>
+
+            <span v-else-if="props.item_type == 'Reference'">
+                <select v-model="editValue" @change="(event) => { blurHandler(event) }">
+                    <option v-for="referenceData in props.referenceItemData" :value=referenceData.id>
+                        {{ referenceData.name }}
+                    </option>
+                </select>
+            </span>
+
             <span v-else @click="editClickHandler">
                 {{ displayValue }}
             </span>
@@ -38,6 +47,8 @@ const props = defineProps<{
     item_value: any,
     item_id: string,
     validations?: any,
+    referenceData?: any,
+    referenceItemData?: Array<any>,
 }>();
 
 let editValue = ref<string>(props.item_value);
@@ -66,6 +77,7 @@ const editClickHandler = () => {
 const renderedContent = computed(() => {
     const tempElement = document.createElement('div');
     tempElement.innerHTML = displayValue.value;
+    tempElement.classList.add('break-all');
     return tempElement.textContent || tempElement.innerText;
 });
 

@@ -16,7 +16,8 @@
             </Dropdown>
         </teleport>
 
-        <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"></CustomList>
+        <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
+            :referenceItemData="referenceItemData"></CustomList>
     </div>
 </template>
 
@@ -38,6 +39,10 @@ let editedData: any = {};
 let editedCount = ref<number>(0);
 
 let visibleColumns = ref<Array<any>>([]);
+
+let referenceData = ref<any>({});
+
+let referenceItemData = ref<Array<any>>([]);
 
 const elementExists = ref(false);
 
@@ -78,6 +83,11 @@ async function collectionFields() {
         let colData = [];
         for (let i in result.data.fields) {
             colData.push({ key: result.data.fields[i]['slug'], label: result.data.fields[i]['displayName'], item_type: result.data.fields[i]['type'], validations: result.data.fields[i]['validations'] });
+
+            if (result.data.fields[i]['type'] == 'Reference') {
+                loadReferencedData(result.data.fields[i]['validations'].collectionId);
+            }
+
         }
         listCols.value = colData;
         visibleColumns.value = listCols.value;
@@ -87,6 +97,24 @@ async function collectionFields() {
     }
 }
 
+
+async function loadReferencedData(collection_id: any) {
+    let aj = new (ajax as any)();
+    let data = [
+        {
+            endPoint: "collections/" + collection_id + "/items/",
+        },
+    ];
+
+    let result = await aj.post("/CallApi.php", data);
+
+    if (result.status == 200) {
+        for (let item in result.data.items) {
+            referenceItemData.value.push({ 'id': result.data.items[item].id, 'name': result.data.items[item].fieldData.name });
+        }
+    }
+
+}
 
 // Selected Collection's Item List
 async function collectionList() {
