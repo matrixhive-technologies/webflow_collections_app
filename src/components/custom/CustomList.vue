@@ -36,14 +36,13 @@
                                         </div>
                                     </td>
 
-                                    <td v-for="column in columns"
-                                    class="break-words"
-                                        :class="column.class ? column.class : ' p-4 text-sm font-normal text-gray-500 whitespace-nowrap dark:text-gray-400'">
+                                    <td v-for="column in columns" class="break-words"
+                                        :class="column.class ? column.class : ' p-4 text-sm font-normal text-gray-500 dark:text-gray-400'">
                                         <slot :name="`cell(${column.key})`" :item="item" :index="index">
                                             <CellItem :column_key="column.key" :item_value="item[column.key]"
                                                 :item_id="item['item_id']" @editEvent="editHandler"
                                                 :item_type="column.item_type" :validations="column.validations"
-                                                :referenceItemData="props.referenceItemData">
+                                                :referenceData="referenceData">
                                             </CellItem>
                                         </slot>
                                     </td>
@@ -82,7 +81,7 @@ const props = defineProps<{
     checkColumn?: string,
     className?: string,
     editData?: any,
-    referenceItemData?: Array<any>,
+    referenceData?: any,
 }>();
 
 let ckColumn = props.checkColumn ? props.checkColumn : "id";

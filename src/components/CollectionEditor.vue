@@ -3,7 +3,7 @@
 
         {{ editMessage }}
 
-        <div v-if="editedCount > 0">
+        <div v-if="editedCount > 0" class="text-right">
             <button type="button"
                 class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
                 @click="updateCollectionList()">
@@ -17,7 +17,7 @@
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
-            :referenceItemData="referenceItemData"></CustomList>
+            :referenceData="referenceData"></CustomList>
     </div>
 </template>
 
@@ -41,8 +41,6 @@ let editedCount = ref<number>(0);
 let visibleColumns = ref<Array<any>>([]);
 
 let referenceData = ref<any>({});
-
-let referenceItemData = ref<Array<any>>([]);
 
 const elementExists = ref(false);
 
@@ -109,11 +107,12 @@ async function loadReferencedData(collection_id: any) {
     let result = await aj.post("/CallApi.php", data);
 
     if (result.status == 200) {
-        for (let item in result.data.items) {
-            referenceItemData.value.push({ 'id': result.data.items[item].id, 'name': result.data.items[item].fieldData.name });
-        }
-    }
+        referenceData.value[collection_id] = {};
 
+        result.data.items.forEach((item: any, index: any) => {
+            referenceData.value[collection_id][index] = { 'id': item.id, 'name': item.fieldData.name };
+        });
+    }
 }
 
 // Selected Collection's Item List

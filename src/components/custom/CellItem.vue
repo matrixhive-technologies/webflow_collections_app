@@ -15,16 +15,19 @@
             <span v-else-if="props.item_type == 'Image'">
                 <img :src="displayValue?.url" class="w-20">
             </span>
-            <span v-else-if="props.item_type == 'RichText'"  class="break-words">
+            <span v-else-if="props.item_type == 'RichText'" class="break-words">
                 <div v-html="renderedContent"></div>
             </span>
 
             <span v-else-if="props.item_type == 'Reference'">
-                <select v-model="editValue" @change="(event) => { blurHandler(event) }">
-                    <option v-for="referenceData in props.referenceItemData" :value=referenceData.id>
-                        {{ referenceData.name }}
-                    </option>
-                </select>
+                <div v-for="(collectionIdWiseData, collection_id, key) in referenceData" :key="key">
+                    <select v-model="editValue" @change="(event) => { blurHandler(event) }"
+                        v-if="collection_id == validations.collectionId">
+                        <option v-for="data in collectionIdWiseData" :value=data.id>
+                            {{ data.name }}
+                        </option>
+                    </select>
+                </div>
             </span>
 
             <span v-else @click="editClickHandler">
@@ -48,7 +51,6 @@ const props = defineProps<{
     item_id: string,
     validations?: any,
     referenceData?: any,
-    referenceItemData?: Array<any>,
 }>();
 
 let editValue = ref<string>(props.item_value);
