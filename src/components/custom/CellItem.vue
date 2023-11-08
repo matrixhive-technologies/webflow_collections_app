@@ -19,9 +19,9 @@
                 <div v-html="renderedContent"></div>
             </span>
 
-            <span v-else-if="props.item_type == 'Reference'">
+            <span v-else-if="props.item_type == 'Reference' || props.item_type == 'MultiReference'">
                 <div v-for="(collectionIdWiseData, collection_id, key) in referenceData" :key="key">
-                    <select v-model="editValue" @change="(event) => { blurHandler(event) }"
+                    <select :multiple="props.item_type == 'MultiReference' ? true : false" v-model="editValue" @change="(event) => { blurHandler(event) }"
                         v-if="collection_id == validations.collectionId">
                         <option v-for="data in collectionIdWiseData" :value=data.id>
                             {{ data.name }}
@@ -29,6 +29,17 @@
                     </select>
                 </div>
             </span>
+
+            <!-- <span v-else-if="props.item_type == 'MultiReference'">
+                <div v-for="(collectionIdWiseData, collection_id, key) in referenceData" :key="key">
+                    <select multiple v-model="editValue" @change="(event) => { blurHandler(event) }"
+                        v-if="collection_id == validations.collectionId">
+                        <option v-for="data in collectionIdWiseData" :value=data.id>
+                            {{ data.name }}
+                        </option>
+                    </select>
+                </div>
+            </span> -->
 
             <span v-else @click="editClickHandler">
                 {{ displayValue }}

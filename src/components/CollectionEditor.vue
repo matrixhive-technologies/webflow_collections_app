@@ -7,7 +7,8 @@
             <button type="button"
                 class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
                 @click="updateCollectionList()">
-                Save {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" : '') }}
+                Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" :
+                    '') }}
             </button>
         </div>
 
@@ -82,7 +83,7 @@ async function collectionFields() {
         for (let i in result.data.fields) {
             colData.push({ key: result.data.fields[i]['slug'], label: result.data.fields[i]['displayName'], item_type: result.data.fields[i]['type'], validations: result.data.fields[i]['validations'] });
 
-            if (result.data.fields[i]['type'] == 'Reference') {
+            if (result.data.fields[i]['type'] == 'Reference' || result.data.fields[i]['type'] == 'MultiReference' ) {
                 loadReferencedData(result.data.fields[i]['validations'].collectionId);
             }
 
@@ -112,6 +113,8 @@ async function loadReferencedData(collection_id: any) {
         result.data.items.forEach((item: any, index: any) => {
             referenceData.value[collection_id][index] = { 'id': item.id, 'name': item.fieldData.name };
         });
+
+        console.log('Referenced Data',referenceData.value);
     }
 }
 
@@ -179,6 +182,8 @@ async function updateCollectionList() {
     let updateData = {};
     let aj = new (ajax as any)();
     let index = 1;
+    let itemIdsArr = [];
+    let publishData = {};
     for (let i in editedData) {
         updateData = { "isArchived": false, "isDraft": false, fieldData: editedData[i] };
         let data = [
@@ -194,8 +199,28 @@ async function updateCollectionList() {
         let result = await aj.post("/CallApi.php", data);
 
         if (result.status == 200) {
-            console.log("Update result" + result.data);
+            // Publish the items to site only if update is successful - starts here.
+            itemIdsArr.push(i);
+            publishData = { itemIds: itemIdsArr };
 
+            let data = [
+                {
+                    method: 'POST',
+                    endPoint: "collections/" + props.selectedCollectionId + "/items/publish",
+                    params: JSON.stringify(publishData),
+                },
+            ];
+
+            let publishResult = await aj.post("/CallApi.php", data);
+
+
+            if (publishResult.status == 200) {
+                editMessage.value = "Updated & Published Items Successfully";
+            } else {
+                editMessage.value = "Something Went Wrong at " + i + " th record";
+                return false;
+            }
+            // Publish the items to site only if update is successful - ends here.
 
         } else {
             editMessage.value = "Something Went Wrong at " + i + " th record";
