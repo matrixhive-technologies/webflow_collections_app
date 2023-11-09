@@ -15,12 +15,25 @@ $existingUser = mysqli_query($connection, $existingUser);
 if (mysqli_num_rows($existingUser) == 1) {
     $row = mysqli_fetch_array($existingUser);
     $_SESSION['LoggedInUser'] = [
-        'first_name' => $row["first_name"],
-        'last_name' => $row["last_name"],
-        'email' => $row["email"],
-        'access_token' => $row["access_token"],
+        'id'           => $row['id'],
+        'first_name'   => $row['first_name'],
+        'last_name'    => $row['last_name'],
+        'email'        => $row['email'],
+        'access_token' => $row['access_token'],
     ];
-    echo json_encode(['success' => true, 'message' => 'Login Success!']);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Login Failed!']);
+
+    // echo json_encode(['success' => true, 'message' => 'Login Success!']);
 }
+
+
+?>
+
+<html>
+
+<head>
+    <script>
+        // window.location.href = "http://localhost:5173/localhost/projects/webflow_applications/webflow_collections_ui/dist/";
+    </script>
+</head>
+
+</html>

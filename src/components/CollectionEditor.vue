@@ -13,7 +13,8 @@
         </div>
 
         <teleport to="#columnsDropdown" v-if="elementExists">
-            <Dropdown :options="listCols" label="Select Columns to Display " @change="columnChangeHandler">
+            <Dropdown :options="listCols" :checkedOptions="checkedOptions" label="Select Columns to Display "
+                @change="columnChangeHandler">
             </Dropdown>
         </teleport>
 
@@ -33,6 +34,7 @@ const props = defineProps({
 })
 
 let listCols = ref<Array<any>>([]);
+let checkedOptions = ref<Array<any>>([]);
 let listItems = ref<Array<any>>([]);
 let editHistory = ref<Array<any>>([]);
 let editMessage = ref<string>('');
@@ -83,13 +85,29 @@ async function collectionFields() {
         for (let i in result.data.fields) {
             colData.push({ key: result.data.fields[i]['slug'], label: result.data.fields[i]['displayName'], item_type: result.data.fields[i]['type'], validations: result.data.fields[i]['validations'] });
 
-            if (result.data.fields[i]['type'] == 'Reference' || result.data.fields[i]['type'] == 'MultiReference' ) {
+            if (result.data.fields[i]['type'] == 'Reference' || result.data.fields[i]['type'] == 'MultiReference') {
                 loadReferencedData(result.data.fields[i]['validations'].collectionId);
             }
 
         }
         listCols.value = colData;
-        visibleColumns.value = listCols.value;
+
+        let aj = new (ajax as any)();
+
+        let storedCollections = await aj.get("/collections.php?collectionId=" + props.selectedCollectionId);
+        console.log(storedCollections);
+        if (storedCollections.data.selectedCols) {
+            // alert('ifff');
+            // console.log("getee", storedCollections.data.selectedCols);
+            visibleColumns.value = storedCollections.data.selectedCols;
+            checkedOptions.value = storedCollections.data.selectedCols;
+        } 
+        else {
+            visibleColumns.value = listCols.value;
+            checkedOptions.value = listCols.value;
+        }
+
+
 
     } else {
         return false;
@@ -114,7 +132,7 @@ async function loadReferencedData(collection_id: any) {
             referenceData.value[collection_id][index] = { 'id': item.id, 'name': item.fieldData.name };
         });
 
-        console.log('Referenced Data',referenceData.value);
+        console.log('Referenced Data', referenceData.value);
     }
 }
 
@@ -164,6 +182,18 @@ const teleportContent = () => {
 
 function columnChangeHandler(updatedList: any) {
     visibleColumns.value = updatedList;
+
+    let aj = new (ajax as any)();
+    let data = [
+        {
+            collectionId: props.selectedCollectionId,
+            selectedCols: JSON.stringify(updatedList),
+        },
+    ];
+
+    aj.post("/collections.php", data);
+
+
 }
 
 function editHandler(data: any) {

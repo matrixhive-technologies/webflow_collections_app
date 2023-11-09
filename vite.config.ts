@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export default defineConfig({
-  base: '/localhost/projects/webflow_applications/webflow_collections_ui/dist',
+  base: '/plp/cmsadmin',
   plugins: [
     vue(),
     AutoImport({

@@ -11,6 +11,6 @@ unset($_SESSION['userDetails']);
 unset($_SESSION['access_token']);
 unset($_SESSION['LoggedInUser']);
 
-header('Location:http://localhost:5173/localhost/projects/webflow_applications/webflow_collections_ui/dist/login');
+header('Location:' . APP_URL);
 
 exit();

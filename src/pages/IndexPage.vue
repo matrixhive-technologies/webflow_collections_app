@@ -85,18 +85,18 @@ async function siteCollection(siteId: any) {
 function collectionChangeHandler(change: any) {
   selectedCollectionId.value = change.new;
 }
-const userStoreObj = userStore();
+// const userStoreObj = userStore();
 async function logout() {
-  userStoreObj.removeUser();
+  // userStoreObj.removeUser();
   window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
 }
-const router = useRouter()
-if (userStoreObj.isLoggedIn) {
-  router.push(userStoreObj.afterLoginRoute);
-} else {
-  userStoreObj.removeUser();
-  router.push('login');
-}
+// const router = useRouter()
+// if (userStoreObj.isLoggedIn) {
+//   router.push(userStoreObj.afterLoginRoute);
+// } else {
+//   userStoreObj.removeUser();
+//   router.push('login');
+// }
 
 </script>
 

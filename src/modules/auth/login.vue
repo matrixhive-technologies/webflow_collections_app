@@ -6,36 +6,39 @@
                     Welcome Back 👋
                 </h2>
                 {{ msg }}
-                <Form @save="login" ref="form">
+                <form ref="form" id="login" method="POST" :action="getAction()">
+                    <Form @save="login" >
 
-                    <template #fields="{ refs }">
-                        <h1 class="text-2xl font-bold text-red-500">{{ validationErr }}</h1>
-                        <TextField name="email" label="Email" :is_valid="emailValidation"
-                            :ref="(ele: any) => { refs.push(ele) }"></TextField>
-                        <TextField name="password" type="password" label="Password" :is_valid="passwordValidation"
-                            :error_message="passwordErrorMessage" :required="true" :ref="(ele: any) => { refs.push(ele) }">
-                        </TextField>
+                        <template #fields="{ refs }">
+                            <h1 class="text-2xl font-bold text-red-500">{{ validationErr }}</h1>
+                            <TextField name="email" label="Email" :is_valid="emailValidation"
+                                :ref="(ele: any) => { refs.push(ele) }"></TextField>
+                            <TextField name="password" type="password" label="Password" :is_valid="passwordValidation"
+                                :error_message="passwordErrorMessage" :required="true"
+                                :ref="(ele: any) => { refs.push(ele) }">
+                            </TextField>
 
-                    </template>
-                    <template #deleteHeader>
-                        <p></p>
-                    </template>
-                    <template #deleteSubHeader>
-                        <p></p>
-                    </template>
-                    <template #svg>
-                        <p></p>
-                    </template>
-                    <template #actions="{ save }" class="inline-block w-full">
-                        <button type="button"
-                            class="my-3 w-full justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            @click="save()">Sign In</button>
-                    </template>
+                        </template>
+                        <template #deleteHeader>
+                            <p></p>
+                        </template>
+                        <template #deleteSubHeader>
+                            <p></p>
+                        </template>
+                        <template #svg>
+                            <p></p>
+                        </template>
+                        <template #actions="{ save }" class="inline-block w-full">
+                            <button type="button"
+                                class="my-3 w-full justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" @click="save()">Sign
+                                In</button>
+                        </template>
 
-                    <template #actionsDelete>
-                        <p></p>
-                    </template>
-                </Form>
+                        <template #actionsDelete>
+                            <p></p>
+                        </template>
+                    </Form>
+                </form>
             </div>
         </div>
     </div>
@@ -49,6 +52,7 @@ import type { user } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { Form } from '@/components/crud';
+import { $ } from 'vue/macros';
 
 const userStoreObj = userStore();
 const router = useRouter()
@@ -81,41 +85,50 @@ let email: string = ''
 let password: string = ''
 let msg: string = ''
 
+const form = ref(null);
+
+function getAction() {
+    return import.meta.env.VITE_API_URL + "/login.php";
+}
+
 const ajaxObj = new (ajax as any)();
 
 const initiate = () => {
-    if (userStoreObj.isLoggedIn) {
-        router.push(userStoreObj.afterLoginRoute);
-    } else {
-        userStoreObj.removeUser();
-        router.push('login');
-    }
+    // if (userStoreObj.isLoggedIn) {
+    //     router.push(userStoreObj.afterLoginRoute);
+    // } else {
+    //     userStoreObj.removeUser();
+    //     router.push('login');
+    // }
 
 }
 
-const login = async () => {
-    let details = {
-        'email': email,
-        'password': password
-    };
-    let { data } = await ajaxObj.post('/login.php', details, {});
+const login = () => {
+    // let details = {
+    //     'email': email,
+    //     'password': password
+    // };
+    // console.log(form);
+    window.form = form;
+    form.value?.submit();
+    // let { data } = await ajaxObj.post(, details, {});
 
-    if (data.success) {
-        let userObj: user = {
-            firstName: data.name,
-            lastName: 'Patel',
-            'email': email,
-            'password': password,
-            authToken: data.token
-        }
-        userStoreObj.setUser(userObj);
-        router.push(userStoreObj.afterLoginRoute);
-    }
-    else {
-        console.log(data.message)
-        validationErr.value = 'Please insert valid details'
-        return false;
-    }
+    // if (data.success) {
+    //     let userObj: user = {
+    //         firstName: data.name,
+    //         lastName: 'Patel',
+    //         'email': email,
+    //         'password': password,
+    //         authToken: data.token
+    //     }
+    //     userStoreObj.setUser(userObj);
+    //     router.push(userStoreObj.afterLoginRoute);
+    // }
+    // else {
+    //     console.log(data.message)
+    //     validationErr.value = 'Please insert valid details'
+    //     return false;
+    // }
 }
 initiate();
 </script>

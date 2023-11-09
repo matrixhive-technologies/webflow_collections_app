@@ -6,9 +6,9 @@ define('APP_NAME', 'Manage Collections Webflow App in PHP');
 # Your application's root URL.
 // define('APP_URL', 'https://0d0e-2406-b400-d11-9862-8895-a8a4-f5a7-d2d2.ngrok-free.app/plp/cmsadmin/app/');
 
-define('APP_URL', 'https://0d0e-2406-b400-d11-9862-8895-a8a4-f5a7-d2d2.ngrok-free.app/projects/webflow_applications/webflow_collections_ui/dist/app/');
+define('APP_URL', 'https://b569-2406-b400-d11-9862-5360-3f1d-6fe2-e1f4.ngrok-free.app/projects/webflow_applications/webflow_collections_ui/dist/app/');
 
-define('HOME_PAGE_URL', 'https://0d0e-2406-b400-d11-9862-8895-a8a4-f5a7-d2d2.ngrok-free.app/plp/cmsadmin/');
+define('HOME_PAGE_URL', 'https://b569-2406-b400-d11-9862-5360-3f1d-6fe2-e1f4.ngrok-free.app/projects/webflow_applications/webflow_collections_ui/');
 
 # Your application's Client ID.
 define('CLIENT_ID', 'e6b54abd7bc636af7ccf60a0e10e52db35339d052cb90519b74eb40c87cedd50');
