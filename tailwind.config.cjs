@@ -4,6 +4,7 @@ const { iconsPlugin, getIconCollections } = require('@egoist/tailwindcss-icons')
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   content: ['./index.html', './src/**/*.{vue,ts}'],
   // theme: {
   //   extend: {

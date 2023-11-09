@@ -24,10 +24,10 @@ export const userStore = defineStore('user', () => {
     const profileUrl = ref('/src/assets/images/users/guest.png');
     const isLoggedIn = ref(false);
     const afterLoginRoute = ref('/');
-    const authType = "bearer";
+    
     const loginRoute = ref('login');
     const getAuthBearerHeader:Function = () => {
-      return   `Bearer `+authToken.value; 
+      return   authToken.value; 
     };
 
     const setAuthToken = ( token:string ) => {
@@ -35,11 +35,10 @@ export const userStore = defineStore('user', () => {
     }
 
     const setUser:Function = (user:user) => {
+      console.log(user, "in set user");
       firstName.value = user.firstName;
       lastName.value = user.lastName;
       email.value = user.email ? user.email : '';
-      password.value = user.password ? user.password : '';
-      role_id.value = user.role_id ? user.role_id : '';
       profileUrl.value = user.profileUrl ? user.profileUrl : '';
       authToken.value = user.authToken ? user.authToken : '';
       isLoggedIn.value = true;

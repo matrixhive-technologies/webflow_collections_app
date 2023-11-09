@@ -4,12 +4,14 @@
         {{ editMessage }}
 
         <div v-if="editedCount > 0" class="text-right">
+            <teleport to="#savebutton" >
             <button type="button"
                 class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
                 @click="updateCollectionList()">
                 Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" :
                     '') }}
             </button>
+            </teleport>
         </div>
 
         <teleport to="#columnsDropdown" v-if="elementExists">
@@ -70,12 +72,11 @@ watch(() => props.selectedCollectionId, (first, second) => {
 // Selected Collection's Field Type
 async function collectionFields() {
     let aj = new (ajax as any)();
-    let data = [
+    let data = 
         {
             endPoint: "collections/" + props.selectedCollectionId,
             params: props.selectedCollectionId,
-        },
-    ];
+        };
 
     let result = await aj.post("/CallApi.php", data);
 
@@ -93,8 +94,10 @@ async function collectionFields() {
         listCols.value = colData;
 
         let aj = new (ajax as any)();
-
-        let storedCollections = await aj.get("/collections.php?collectionId=" + props.selectedCollectionId);
+        let params = {
+            collectionId: props.selectedCollectionId
+        };
+        let storedCollections = await aj.get("/collections.php",params);
         console.log(storedCollections);
         if (storedCollections.data.selectedCols) {
             // alert('ifff');
@@ -117,11 +120,10 @@ async function collectionFields() {
 
 async function loadReferencedData(collection_id: any) {
     let aj = new (ajax as any)();
-    let data = [
+    let data =
         {
             endPoint: "collections/" + collection_id + "/items/",
-        },
-    ];
+        };
 
     let result = await aj.post("/CallApi.php", data);
 
@@ -140,12 +142,11 @@ async function loadReferencedData(collection_id: any) {
 async function collectionList() {
 
     let aj = new (ajax as any)();
-    let data = [
+    let data = 
         {
             endPoint: "collections/" + props.selectedCollectionId + "/items",
             params: props.selectedCollectionId,
-        },
-    ];
+        };
 
     let result = await aj.post("/CallApi.php", data);
 
@@ -184,12 +185,11 @@ function columnChangeHandler(updatedList: any) {
     visibleColumns.value = updatedList;
 
     let aj = new (ajax as any)();
-    let data = [
+    let data =
         {
             collectionId: props.selectedCollectionId,
             selectedCols: JSON.stringify(updatedList),
-        },
-    ];
+        };
 
     aj.post("/collections.php", data);
 
@@ -216,13 +216,13 @@ async function updateCollectionList() {
     let publishData = {};
     for (let i in editedData) {
         updateData = { "isArchived": false, "isDraft": false, fieldData: editedData[i] };
-        let data = [
+        let data = 
             {
                 method: 'PATCH',
                 endPoint: "collections/" + props.selectedCollectionId + "/items/" + i,
                 params: JSON.stringify(updateData),
-            },
-        ];
+            };
+        
 
         editMessage.value = "Editing" + index + " Record Out of " + editedCount.value;
 
@@ -233,13 +233,13 @@ async function updateCollectionList() {
             itemIdsArr.push(i);
             publishData = { itemIds: itemIdsArr };
 
-            let data = [
+            let data = 
                 {
                     method: 'POST',
                     endPoint: "collections/" + props.selectedCollectionId + "/items/publish",
                     params: JSON.stringify(publishData),
-                },
-            ];
+                };
+            
 
             let publishResult = await aj.post("/CallApi.php", data);
 

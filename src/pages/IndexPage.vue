@@ -30,12 +30,12 @@ let collections = ref<Array<any>>([]);
 async function listOfSites() {
   try {
     let aj = new (ajax as any)();
-    let data = [
+    let data = 
       {
         endPoint: "sites",
-      },
+      };
 
-    ];
+    
 
     let result = await aj.post("/CallApi.php", data);
 
@@ -61,12 +61,11 @@ async function siteCollection(siteId: any) {
   selectedSiteId.value = siteId.new;
 
   let aj = new (ajax as any)();
-  let data = [
+  let data = 
     {
       endPoint: "sites/" + selectedSiteId.value + "/collections",
       params: selectedSiteId.value,
-    },
-  ];
+    };
 
   let result = await aj.post("/CallApi.php", data);
   if (result.status == 200) {
@@ -85,26 +84,29 @@ async function siteCollection(siteId: any) {
 function collectionChangeHandler(change: any) {
   selectedCollectionId.value = change.new;
 }
-// const userStoreObj = userStore();
+ const userStoreObj = userStore();
 async function logout() {
-  // userStoreObj.removeUser();
-  window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
+   userStoreObj.removeUser();
+   window.location.href = window.location.href;
+  //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
 }
-// const router = useRouter()
-// if (userStoreObj.isLoggedIn) {
-//   router.push(userStoreObj.afterLoginRoute);
-// } else {
-//   userStoreObj.removeUser();
-//   router.push('login');
-// }
+ const router = useRouter()
+if (userStoreObj.isLoggedIn) {
+   console.log(userStoreObj.authToken, "The auth token");
+} else {
+  userStoreObj.removeUser();
+  router.push('login');
+}
 
 </script>
 
 <template>
-  <div class="container mx-auto mt-5">
+<div class="dark ">
+  <div class="container mx-auto py-5 px-10 min-h-screen   bg-gray-900">
+    <div class="">
     <div class="text-right">
       <button
-        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+        class="focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
         type="button" @click.prevent="logout()">Logout
       </button>
     </div>
@@ -117,10 +119,12 @@ async function logout() {
       </SelectDropdown>
 
       <div id="columnsDropdown" class="w-1/3 ml-2"></div>
+      <div id="savebutton " class="w-1/3 ml-2"></div>
 
     </div>
 
     <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
-
   </div>
+  </div>
+</div>
 </template>

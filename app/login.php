@@ -21,19 +21,13 @@ if (mysqli_num_rows($existingUser) == 1) {
         'email'        => $row['email'],
         'access_token' => $row['access_token'],
     ];
+    $user = $_SESSION['LoggedInUser'];
+    $user['access_token'] = session_id().'090##934'.time();
 
-    // echo json_encode(['success' => true, 'message' => 'Login Success!']);
+    echo json_encode(['success' => true, 'user' => $user,'message' => 'Login Success!']);
+   
+} else {
+    echo json_encode(['success' => false, 'message' => 'Login Failed!']);
+    
 }
-
-
-?>
-
-<html>
-
-<head>
-    <script>
-        // window.location.href = "http://localhost:5173/localhost/projects/webflow_applications/webflow_collections_ui/dist/";
-    </script>
-</head>
-
-</html>
+exit;

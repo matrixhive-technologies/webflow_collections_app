@@ -1,4 +1,5 @@
-<template>
+<template >
+<div class="dark">
     <div class="flex items-center justify-center mx-auto md:h-screen ">
         <div class="w-1/2 max-w-screen-md ml-auto mr-auto mt-0 mb-0 bg-white rounded-lg drop-shadow-none dark:bg-gray-800">
             <div class="form-box px-10 py-20 shadow-md">
@@ -6,14 +7,14 @@
                     Welcome Back 👋
                 </h2>
                 {{ msg }}
-                <form ref="form" id="login" method="POST" :action="getAction()">
+                
                     <Form @save="login" >
 
                         <template #fields="{ refs }">
                             <h1 class="text-2xl font-bold text-red-500">{{ validationErr }}</h1>
-                            <TextField name="email" label="Email" :is_valid="emailValidation"
+                            <TextField name="email" value="rupesh.patel@matrixhive.com" label="Email" :is_valid="emailValidation"
                                 :ref="(ele: any) => { refs.push(ele) }"></TextField>
-                            <TextField name="password" type="password" label="Password" :is_valid="passwordValidation"
+                            <TextField name="password" value="123456" type="password" label="Password" :is_valid="passwordValidation"
                                 :error_message="passwordErrorMessage" :required="true"
                                 :ref="(ele: any) => { refs.push(ele) }">
                             </TextField>
@@ -29,7 +30,7 @@
                             <p></p>
                         </template>
                         <template #actions="{ save }" class="inline-block w-full">
-                            <button type="button"
+                            <button type="button" 
                                 class="my-3 w-full justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" @click="save()">Sign
                                 In</button>
                         </template>
@@ -38,10 +39,11 @@
                             <p></p>
                         </template>
                     </Form>
-                </form>
+                
             </div>
         </div>
     </div>
+</div>
 </template>
     
 <script setup lang="ts">
@@ -52,7 +54,7 @@ import type { user } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { Form } from '@/components/crud';
-import { $ } from 'vue/macros';
+
 
 const userStoreObj = userStore();
 const router = useRouter()
@@ -94,36 +96,36 @@ function getAction() {
 const ajaxObj = new (ajax as any)();
 
 const initiate = () => {
-    // if (userStoreObj.isLoggedIn) {
-    //     router.push(userStoreObj.afterLoginRoute);
-    // } else {
-    //     userStoreObj.removeUser();
-    //     router.push('login');
-    // }
+     if (userStoreObj.isLoggedIn) {
+         router.push('/');
+     } else {
+         userStoreObj.removeUser();
+         
+    }
 
 }
 
-const login = () => {
-    // let details = {
-    //     'email': email,
-    //     'password': password
-    // };
+const login = async () => {
+    let details = {
+         'email': email,
+         'password': password
+     };
     // console.log(form);
-    window.form = form;
-    form.value?.submit();
-    // let { data } = await ajaxObj.post(, details, {});
-
-    // if (data.success) {
-    //     let userObj: user = {
-    //         firstName: data.name,
-    //         lastName: 'Patel',
-    //         'email': email,
-    //         'password': password,
-    //         authToken: data.token
-    //     }
-    //     userStoreObj.setUser(userObj);
-    //     router.push(userStoreObj.afterLoginRoute);
-    // }
+    
+    //form.value?.submit();
+    let { data } = await ajaxObj.post('/login.php', details, {});
+     console.log(data);
+     if (data.success) {
+        
+        let userObj: user = {
+             firstName: data.user.first_name,
+             lastName: data.user.last_name,
+             email: data.user.email,
+             authToken: data.user.access_token
+        }
+        userStoreObj.setUser(userObj);
+        router.push('/');
+     }
     // else {
     //     console.log(data.message)
     //     validationErr.value = 'Please insert valid details'

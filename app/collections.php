@@ -1,7 +1,6 @@
 <?php
+require_once('config/check_session.php');
 error_reporting(1);
-session_id('hsnqn5amdm8e811dfnhq6vmf3u');
-session_start();
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE PATCH');
 
