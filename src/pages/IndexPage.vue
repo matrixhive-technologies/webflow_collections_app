@@ -2,6 +2,7 @@
 import CollectionEditor from '@/components/CollectionEditor.vue'
 import { SelectDropdown } from '@/components/crud'
 import ajax from "@/accessories/ajax";
+import { userStore } from '@/stores/user';
 
 // useRoute, useHead, and HelloWorld are automatically imported. See vite.config.ts for details.
 const route = useRoute()
@@ -84,12 +85,29 @@ async function siteCollection(siteId: any) {
 function collectionChangeHandler(change: any) {
   selectedCollectionId.value = change.new;
 }
+const userStoreObj = userStore();
+async function logout() {
+  userStoreObj.removeUser();
+  window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
+}
+const router = useRouter()
+if (userStoreObj.isLoggedIn) {
+  router.push(userStoreObj.afterLoginRoute);
+} else {
+  userStoreObj.removeUser();
+  router.push('login');
+}
 
 </script>
 
 <template>
   <div class="container mx-auto mt-5">
-
+    <div class="text-right">
+      <button
+        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+        type="button" @click.prevent="logout()">Logout
+      </button>
+    </div>
     <div class="flex items-end">
       <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/3">
       </SelectDropdown>

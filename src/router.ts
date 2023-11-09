@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import IndexPage from '@/pages/IndexPage.vue'
 
+import loginVue from "@/modules/auth/login.vue"
+
 
 const routes = [
   {
@@ -11,8 +13,11 @@ const routes = [
       title: 'Site Editor site map page',
     },
   },
-
-
+  {
+    path: '/login',
+    name: 'login',
+    component: loginVue
+  }
 ]
 
 const router = createRouter({

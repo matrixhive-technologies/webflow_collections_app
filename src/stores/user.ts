@@ -23,7 +23,7 @@ export const userStore = defineStore('user', () => {
     const authToken = ref('')
     const profileUrl = ref('/src/assets/images/users/guest.png');
     const isLoggedIn = ref(false);
-    const afterLoginRoute = ref('dashboard');
+    const afterLoginRoute = ref('/');
     const authType = "bearer";
     const loginRoute = ref('login');
     const getAuthBearerHeader:Function = () => {

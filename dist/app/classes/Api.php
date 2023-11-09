@@ -51,9 +51,6 @@ class Api
             } else if ($this->method == 'PATCH') {
                 $result = $this->patch();
                 $this->response = $result;
-            } else if ($this->method == 'POST') {
-                $result = $this->post();
-                $this->response = $result;
             }
         } catch (Exception $e) {
             $this->response = json_encode(['message' => $e->getMessage()]);
@@ -101,33 +98,6 @@ class Api
     }
 
     public function patch()
-    {
-        $baseUrl = $this->apiBaseUrl;
-        $url = $baseUrl . $this->endPoint;
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->method);
-
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->params);
-
-        $headers = array();
-        $headers[] = 'Accept: application/json';
-        $headers[] = 'Authorization: Bearer ' . $this->accessToken;
-        $headers[] = 'Content-Type: application/json';
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        $result = curl_exec($ch);
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
-        curl_close($ch);
-        return $result;
-    }
-
-    public function post()
     {
         $baseUrl = $this->apiBaseUrl;
         $url = $baseUrl . $this->endPoint;
