@@ -5,9 +5,9 @@ export default class ajax {
     constructor() {
         this.setHeader('Accept', 'application/json');
         this.user = userStore();
-        if (this.user.isLoggedIn) {
-            this.setHeader('Authorization', this.user.getAuthBearerHeader())
-        }
+        // if (this.user.isLoggedIn) {
+        //     this.setHeader('Authorization', this.user.getAuthBearerHeader())
+        // }
     }
     VUE_APP_API_URL: String = import.meta.env.VITE_API_URL;
     user: any = {}
