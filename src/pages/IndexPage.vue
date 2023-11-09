@@ -119,7 +119,7 @@ if (userStoreObj.isLoggedIn) {
       </SelectDropdown>
 
       <div id="columnsDropdown" class="w-1/3 ml-2"></div>
-      <div id="savebutton " class="w-1/3 ml-2"></div>
+      
 
     </div>
 

@@ -1,18 +1,21 @@
 <template>
     <div class="relative py-8">
 
-        {{ editMessage }}
+      
 
-        <div v-if="editedCount > 0" class="text-right">
-            <teleport to="#savebutton" >
-            <button type="button"
-                class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
-                @click="updateCollectionList()">
-                Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" :
-                    '') }}
-            </button>
-            </teleport>
-        </div>
+        
+         
+           
+                <div v-if="editedCount > 0" class="text-right -mt-[93px] ">
+                    <button type="button"
+                        class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
+                        @click="updateCollectionList()">
+                        Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" :
+                            '') }}
+                    </button>
+                </div>
+                
+                <div v-if="editMessage" class="text-gray-50">{{ editMessage }} </div>
 
         <teleport to="#columnsDropdown" v-if="elementExists">
             <Dropdown :options="listCols" :checkedOptions="checkedOptions" label="Select Columns to Display "
