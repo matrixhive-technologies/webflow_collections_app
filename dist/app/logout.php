@@ -11,6 +11,6 @@ unset($_SESSION['userDetails']);
 unset($_SESSION['access_token']);
 unset($_SESSION['LoggedInUser']);
 
-header('Location:' . APP_URL);
+header('Location:' . HOME_PAGE_URL);
 
 exit();
