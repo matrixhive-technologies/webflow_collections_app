@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 09, 2023 at 07:35 PM
+-- Generation Time: Nov 10, 2023 at 04:31 PM
 -- Server version: 8.0.35-0ubuntu0.22.04.1
 -- PHP Version: 8.1.2-1ubuntu2.14
 
@@ -50,8 +50,8 @@ CREATE TABLE `user_collections` (
   `user_id` int DEFAULT NULL,
   `collection_id` text COLLATE utf8mb4_general_ci,
   `selected_collections_json` longtext COLLATE utf8mb4_general_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
