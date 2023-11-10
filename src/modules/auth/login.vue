@@ -126,11 +126,11 @@ const login = async () => {
         userStoreObj.setUser(userObj);
         router.push('/');
      }
-    // else {
-    //     console.log(data.message)
-    //     validationErr.value = 'Please insert valid details'
-    //     return false;
-    // }
+    else {
+        console.log(data.message)
+        validationErr.value = 'Please insert valid details'
+        return false;
+    }
 }
 initiate();
 </script>

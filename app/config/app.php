@@ -1,6 +1,6 @@
 <?php
 
-define('ENV','rp_local');
+define('ENV','asd_local');
 
 if(ENV == 'asd_local')
 {

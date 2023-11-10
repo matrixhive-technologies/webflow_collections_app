@@ -19,7 +19,28 @@
                                 <th v-for="column in columns" scope="col" class="px-6 py-3">
                                     <slot :name="`header(${column.key})`">
                                         {{ column.label }}
-                                    </slot>
+                                    </slot><br />
+                                    <!-- Search Start Here -->
+                                    <div v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
+                                        <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+                focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 
+                dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 
+                dark:focus:border-primary-500" placeholder="search..."
+                                            @keyup="(event) => { handleFilterChange({ 'item_type': column.item_type, 'column_key': column.key }, event) }" />
+                                    </div>
+
+                                    <div v-else-if="column.item_type == 'Option'">
+                                        <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 
+                    block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                    dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            @change="(event) => { handleFilterChange({ 'item_type': column.item_type, 'column_key': column.key }, event) }">
+                                            <option value="">select option</option>
+                                            <option v-for="option in column.validations.options" :value=option.id>{{
+                                                option.name }}</option>
+                                        </select>
+                                    </div>
+                                    <!-- Search Ends Here -->
+
                                 </th>
                             </tr>
                         </thead>
@@ -27,7 +48,7 @@
 
                             <template v-if="items.length > 0" :columns="columns" v-for="item, index in items" :item="item"
                                 :index="index">
-                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700" v-if="filterRecord(item)">
                                     <td class="w-4 p-4" v-if="checkItems">
                                         <div class="flex items-center">
                                             <input aria-describedby="checkbox-1" type="checkbox" name="checkbox[]"
@@ -85,6 +106,40 @@ const props = defineProps<{
 }>();
 
 let ckColumn = props.checkColumn ? props.checkColumn : "id";
+
+let filters = ref<any>({});
+
+const handleFilterChange = (filterItem: any, event: any) => {
+    filterItem.value = event.target.value;
+    filters.value[filterItem.column_key] = filterItem;
+};
+
+const filterRecord = (item: any) => {
+    let response = true;
+    for (let i in filters.value) {
+        let fl = filters.value[i];
+
+        if (fl.item_type == 'PlainText' || fl.item_type == 'Color') {
+            console.log("item value original string", item[fl.column_key]);
+            console.log("fal value string to be matched", fl.value);
+            if (!item[fl.column_key].includes(fl.value)) {
+                response = false;
+            }
+
+        } else if (fl.item_type == 'Option') {
+            console.log("Option", item[fl.column_key]);
+            console.log("fal value string to be matched", fl.value);
+            if (fl.value != item[fl.column_key]) {
+                response = false;
+            }
+
+        }
+    }
+    return response;
+
+};
+
+
 
 async function editCheckedData() {
     if (props.editData && props.editData.contacts) {
