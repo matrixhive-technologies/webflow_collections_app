@@ -12,9 +12,9 @@
 
                         <template #fields="{ refs }">
                             <h1 class="text-2xl font-bold text-red-500">{{ validationErr }}</h1>
-                            <TextField name="email" value="rupesh.patel@matrixhive.com" label="Email" :is_valid="emailValidation"
+                            <TextField name="email" label="Email" :is_valid="emailValidation"
                                 :ref="(ele: any) => { refs.push(ele) }"></TextField>
-                            <TextField name="password" value="123456" type="password" label="Password" :is_valid="passwordValidation"
+                            <TextField name="password" type="password" label="Password" :is_valid="passwordValidation"
                                 :error_message="passwordErrorMessage" :required="true"
                                 :ref="(ele: any) => { refs.push(ele) }">
                             </TextField>
