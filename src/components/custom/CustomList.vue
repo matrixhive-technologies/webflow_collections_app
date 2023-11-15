@@ -131,9 +131,9 @@ const filterRecord = (item: any) => {
 
         //fl.item_type == 'PlainText' || fl.item_type == 'Color' || fl.item_type == 'RichText'
         if (enabledSearch.includes(fl.item_type)) {
-            console.log("item value original string", item[fl.column_key]);
-            console.log("fal value string to be matched", fl.value);
-            if (!item[fl.column_key].includes(fl.value)) {
+            console.log("item value original string--", item[fl.column_key]);
+            console.log("fal value string to be matched--", fl.value.toLowerCase());
+            if (!item[fl.column_key].toLowerCase().includes(fl.value.toLowerCase())) {
                 response = false;
             }
 
