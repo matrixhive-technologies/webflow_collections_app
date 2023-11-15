@@ -10,7 +10,7 @@ const routes = [
     path: '/',
     component: IndexPage,
     meta: {
-      title: 'Site Editor site map page',
+      title: 'Webflow Collection Editor by PixlFlo',
     },
   },
   {
