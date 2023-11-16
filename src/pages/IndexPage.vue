@@ -30,12 +30,12 @@ let collections = ref<Array<any>>([]);
 async function listOfSites() {
   try {
     let aj = new (ajax as any)();
-    let data = 
-      {
-        endPoint: "sites",
-      };
+    let data =
+    {
+      endPoint: "sites",
+    };
 
-    
+
 
     let result = await aj.post("/CallApi.php", data);
 
@@ -61,11 +61,11 @@ async function siteCollection(siteId: any) {
   selectedSiteId.value = siteId.new;
 
   let aj = new (ajax as any)();
-  let data = 
-    {
-      endPoint: "sites/" + selectedSiteId.value + "/collections",
-      params: selectedSiteId.value,
-    };
+  let data =
+  {
+    endPoint: "sites/" + selectedSiteId.value + "/collections",
+    params: selectedSiteId.value,
+  };
 
   let result = await aj.post("/CallApi.php", data);
   if (result.status == 200) {
@@ -84,15 +84,15 @@ async function siteCollection(siteId: any) {
 function collectionChangeHandler(change: any) {
   selectedCollectionId.value = change.new;
 }
- const userStoreObj = userStore();
+const userStoreObj = userStore();
 async function logout() {
-   userStoreObj.removeUser();
-   window.location.href = window.location.href;
+  userStoreObj.removeUser();
+  window.location.href = window.location.href;
   //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
 }
- const router = useRouter()
+const router = useRouter()
 if (userStoreObj.isLoggedIn) {
-   console.log(userStoreObj.authToken, "The auth token");
+  console.log(userStoreObj.authToken, "The auth token");
 } else {
   userStoreObj.removeUser();
   router.push('login');
@@ -101,30 +101,29 @@ if (userStoreObj.isLoggedIn) {
 </script>
 
 <template>
-<div class="dark ">
-  <div class="container mx-auto py-5 px-10 min-h-screen   bg-gray-900">
-    <div class="">
-    <div class="text-right">
-      <button
-        class="focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-        type="button" @click.prevent="logout()">Logout
-      </button>
+  <div class="dark ">
+    <div class="container mx-auto py-5 px-10 min-h-screen   bg-gray-900">
+      <div class="flex items-end">
+        <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/4">
+        </SelectDropdown>
+
+        <SelectDropdown :options="collections" name="collections" @change="collectionChangeHandler"
+          label="Select Collection" class="w-1/4 ml-2">
+        </SelectDropdown>
+
+        <div id="columnsDropdown" class="w-1/4 ml-2"></div>
+
+        <div class="w-1/4 ml-2">
+          <button
+            class="focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+            type="button" @click.prevent="logout()">Logout
+          </button>
+        </div>
+
+
+      </div>
+
+      <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
     </div>
-    <div class="flex items-end">
-      <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/3">
-      </SelectDropdown>
-
-      <SelectDropdown :options="collections" name="collections" @change="collectionChangeHandler"
-        label="Select Collection" class="w-1/3 ml-2">
-      </SelectDropdown>
-
-      <div id="columnsDropdown" class="w-1/3 ml-2"></div>
-      
-
-    </div>
-
-    <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
   </div>
-  </div>
-</div>
 </template>
