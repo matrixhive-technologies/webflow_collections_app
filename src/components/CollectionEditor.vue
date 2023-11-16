@@ -83,16 +83,28 @@ async function collectionFields() {
 
 
     if (result.status == 200) {
-        let colData = [];
+        let requiredFields = [];
+        let optionalFields = [];
         for (let i in result.data.fields) {
-            colData.push({ key: result.data.fields[i]['slug'], label: result.data.fields[i]['displayName'], item_type: result.data.fields[i]['type'], validations: result.data.fields[i]['validations'] });
+
+            if (result.data.fields[i]['isRequired'] == true) {
+                requiredFields.push({ key: result.data.fields[i]['slug'], label: result.data.fields[i]['displayName'], item_type: result.data.fields[i]['type'], validations: result.data.fields[i]['validations'] });
+                console.log("required", requiredFields);
+
+            } else {
+                optionalFields.push({ key: result.data.fields[i]['slug'], label: result.data.fields[i]['displayName'], item_type: result.data.fields[i]['type'], validations: result.data.fields[i]['validations'] });
+
+                console.log("optionalFields", optionalFields);
+            }
 
             if (result.data.fields[i]['type'] == 'Reference' || result.data.fields[i]['type'] == 'MultiReference') {
                 loadReferencedData(result.data.fields[i]['validations'].collectionId);
             }
 
         }
-        listCols.value = colData;
+        listCols.value = requiredFields.concat(optionalFields);
+
+        console.log('final array', listCols.value);
 
         let aj = new (ajax as any)();
         let params = {

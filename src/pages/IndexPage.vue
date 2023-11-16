@@ -30,12 +30,12 @@ let collections = ref<Array<any>>([]);
 async function listOfSites() {
   try {
     let aj = new (ajax as any)();
-    let data = 
-      {
-        endPoint: "sites",
-      };
+    let data =
+    {
+      endPoint: "sites",
+    };
 
-    
+
 
     let result = await aj.post("/CallApi.php", data);
 
@@ -61,11 +61,11 @@ async function siteCollection(siteId: any) {
   selectedSiteId.value = siteId.new;
 
   let aj = new (ajax as any)();
-  let data = 
-    {
-      endPoint: "sites/" + selectedSiteId.value + "/collections",
-      params: selectedSiteId.value,
-    };
+  let data =
+  {
+    endPoint: "sites/" + selectedSiteId.value + "/collections",
+    params: selectedSiteId.value,
+  };
 
   let result = await aj.post("/CallApi.php", data);
   if (result.status == 200) {
@@ -84,15 +84,15 @@ async function siteCollection(siteId: any) {
 function collectionChangeHandler(change: any) {
   selectedCollectionId.value = change.new;
 }
- const userStoreObj = userStore();
+const userStoreObj = userStore();
 async function logout() {
-   userStoreObj.removeUser();
-   window.location.href = window.location.href;
+  userStoreObj.removeUser();
+  window.location.href = window.location.href;
   //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
 }
- const router = useRouter()
+const router = useRouter()
 if (userStoreObj.isLoggedIn) {
-   console.log(userStoreObj.authToken, "The auth token");
+  console.log(userStoreObj.authToken, "The auth token");
 } else {
   userStoreObj.removeUser();
   router.push('login');
@@ -121,10 +121,9 @@ if (userStoreObj.isLoggedIn) {
       <div id="columnsDropdown" class="w-1/4 ml-2"></div>
       
 
-    </div>
+      </div>
 
-    <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
+      <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
+    </div>
   </div>
-  </div>
-</div>
 </template>
