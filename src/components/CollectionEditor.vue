@@ -13,12 +13,12 @@
 
         <teleport to="#columnsDropdown" v-if="elementExists">
             <Dropdown :options="listCols" :checkedOptions="checkedOptions" label="Select Columns to Display "
-                @change="columnChangeHandler">
+                @change="columnChangeHandler" @showDates="(sd) => { showDates = sd; }">
             </Dropdown>
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
-            :referenceData="referenceData" @sortItemsEvent="sortItems"></CustomList>
+            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates"></CustomList>
     </div>
 </template>
 
@@ -39,6 +39,8 @@ let editHistory = ref<Array<any>>([]);
 let editMessage = ref<string>('');
 let editedData: any = {};
 let editedCount = ref<number>(0);
+
+let showDates = ref(true);
 
 let visibleColumns = ref<Array<any>>([]);
 

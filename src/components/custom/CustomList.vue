@@ -23,7 +23,8 @@
                                         <slot :name="`header(${column.key})`">
                                             {{ column.label }}
                                         </slot>
-                                        <button @click="sortItems(column.key, 'ASC')" v-if="column.item_type == 'PlainText' || column.item_type == 'Color' " >
+                                        <button @click="sortItems(column.key, 'ASC')"
+                                            v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
                                             <svg class="w-3 h-3 dark:text-white" aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -31,7 +32,8 @@
                                             </svg>
                                         </button>
 
-                                        <button @click="sortItems(column.key, 'DESC')" v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
+                                        <button @click="sortItems(column.key, 'DESC')"
+                                            v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
                                             <svg class="w-3 h-3 ml-0 dark:text-white dark:text-white" aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -70,8 +72,42 @@
                                     <!-- Search Ends Here -->
                                 </th>
 
-                                <th v-if="columns.length > 0">Created On</th>
-                                <th v-if="columns.length > 0">Updated On</th>
+
+                                <th v-if="columns.length > 0 && showDates">Created On
+                                    <button @click="sortItems('createdOn', 'ASC')">
+                                        <svg class="w-3 h-3 dark:text-white" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4" />
+                                        </svg>
+                                    </button>
+
+                                    <button @click="sortItems('createdOn', 'DESC')">
+                                        <svg class="w-3 h-3 ml-0 dark:text-white dark:text-white" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M5 1v12m0 0 4-4m-4 4L1 9" />
+                                        </svg>
+                                    </button>
+                                </th>
+                                <th v-if="columns.length > 0 && showDates">Updated On
+                                    <button @click="sortItems('lastUpdated', 'ASC')">
+                                        <svg class="w-3 h-3 dark:text-white" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4" />
+                                        </svg>
+                                    </button>
+
+                                    <button @click="sortItems('lastUpdated', 'DESC')">
+                                        <svg class="w-3 h-3 ml-0 dark:text-white dark:text-white" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M5 1v12m0 0 4-4m-4 4L1 9" />
+                                        </svg>
+                                    </button>
+
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
@@ -99,11 +135,11 @@
                                     </td>
 
                                     <td class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400"
-                                        v-if="columns.length > 0">{{
+                                        v-if="columns.length > 0 && showDates">{{
                                             moment(item.createdOn).format('MMMM Do YYYY, h:mm:ss a') }}</td>
 
                                     <td class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400"
-                                        v-if="columns.length > 0">{{
+                                        v-if="columns.length > 0 && showDates">{{
                                             moment(item.lastUpdated).format('MMMM Do YYYY, h:mm:ss a') }}</td>
                                 </tr>
                             </template>
@@ -142,6 +178,7 @@ const props = defineProps<{
     className?: string,
     editData?: any,
     referenceData?: any,
+    showDates?: boolean,
 }>();
 
 let ckColumn = props.checkColumn ? props.checkColumn : "id";
