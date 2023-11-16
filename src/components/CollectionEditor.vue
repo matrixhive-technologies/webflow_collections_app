@@ -7,10 +7,6 @@
                 Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" :
                     '') }}
             </button>
-            <button
-          class="focus:outline-none text-white bg-red-700 ml-2  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-          type="button" @click.prevent="logout()">Logout
-        </button>
         </div>
 
         <div v-if="editMessage" class="text-gray-50">{{ editMessage }} </div>
@@ -30,7 +26,6 @@
 import ajax from "@/accessories/ajax";
 import CustomList from "@/components/custom/CustomList.vue";
 import Dropdown from "@/components/crud/fields/dropdown.vue";
-import { userStore } from '@/stores/user';
 
 const props = defineProps({
     selectedSiteId: { type: Number, default: 0 },
@@ -55,12 +50,6 @@ onMounted(() => {
     // Check if the element exists on mount
     elementExists.value = document.body.contains(document.querySelector('#columnsDropdown'));
 });
-const userStoreObj = userStore();
-async function logout() {
-  userStoreObj.removeUser();
-  window.location.href = window.location.href;
-  //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
-}
 
 // watch works directly on a ref
 watch(() => props.selectedCollectionId, (first, second) => {

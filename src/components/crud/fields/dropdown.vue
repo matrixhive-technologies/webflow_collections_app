@@ -49,13 +49,29 @@ const props = defineProps<{
 let checkedOptionsLocal = ref<Array<any>>([]);
 
 watch(() => props.checkedOptions, () => {
-  console.log('props.checkedOptions',props.checkedOptions);
+  console.log('props.checkedOptions', props.checkedOptions);
   checkedOptionsLocal.value = props.checkedOptions;
 });
 
 
 function changeHandler() {
-  emit('change', checkedOptionsLocal.value);
+  let orderedList = [];
+  for (let option in props.options) {
+    let isExists = false;
+
+    for (let checkedOption in checkedOptionsLocal.value) {
+      if (checkedOptionsLocal.value[checkedOption].key == props.options[option].key) {
+        isExists = true;
+        break;
+      }
+    }
+    if (isExists) {
+      orderedList.push(props.options[option]);
+    }
+
+  }
+
+  emit('change', orderedList);
 
 }
 </script>
