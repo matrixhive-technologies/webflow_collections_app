@@ -4,6 +4,7 @@
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden shadow">
                     <span class="text-gray-600 mx-2" v-if="checkItems">Selected Items : {{ checkedItems.length }}</span>
+
                     <table :class="className ? className : 'min-w-full'"
                         class="w-full text-sm text-left text-gray-500 dark:text-gray-800">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -16,10 +17,29 @@
                                         <label for="checkbox-all" class="sr-only">checkbox</label>
                                     </div>
                                 </th>
+
                                 <th v-for="column in columns" scope="col" class="px-6 py-3">
-                                    <slot :name="`header(${column.key})`">
-                                        {{ column.label }}
-                                    </slot><br />
+                                    <div class="flex items-center">
+                                        <slot :name="`header(${column.key})`">
+                                            {{ column.label }}
+                                        </slot>
+                                        <button @click="sortItems(column.key, 'ASC')" v-if="column.item_type == 'PlainText' || column.item_type == 'Color' " >
+                                            <svg class="w-3 h-3 dark:text-white" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4" />
+                                            </svg>
+                                        </button>
+
+                                        <button @click="sortItems(column.key, 'DESC')" v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
+                                            <svg class="w-3 h-3 ml-0 dark:text-white dark:text-white" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2" d="M5 1v12m0 0 4-4m-4 4L1 9" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
                                     <!-- Search Start Here -->
                                     <div v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
                                         <input type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
@@ -47,16 +67,17 @@
                 dark:focus:border-primary-500" placeholder="search..."
                                             @keyup="(event) => { handleFilterChange({ 'item_type': column.item_type, 'column_key': column.key }, event) }" />
                                     </div>
-
                                     <!-- Search Ends Here -->
-
                                 </th>
+
+                                <th v-if="columns.length > 0">Created On</th>
+                                <th v-if="columns.length > 0">Updated On</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
 
                             <template v-if="items.length > 0" :columns="columns" v-for="item, index in items" :item="item"
-                                :index="index">
+                                :index="index" :key="item.slug">
                                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700" v-if="filterRecord(item)">
                                     <td class="w-4 p-4" v-if="checkItems">
                                         <div class="flex items-center">
@@ -76,6 +97,14 @@
                                             </CellItem>
                                         </slot>
                                     </td>
+
+                                    <td class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400"
+                                        v-if="columns.length > 0">{{
+                                            moment(item.createdOn).format('MMMM Do YYYY, h:mm:ss a') }}</td>
+
+                                    <td class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400"
+                                        v-if="columns.length > 0">{{
+                                            moment(item.lastUpdated).format('MMMM Do YYYY, h:mm:ss a') }}</td>
                                 </tr>
                             </template>
                             <template v-else>
@@ -101,7 +130,8 @@
 </template>
 <script setup lang="ts">
 import CellItem from "@/components/custom/CellItem.vue"
-const emits = defineEmits(["action", "editEvent"]);
+import moment from 'moment';
+const emits = defineEmits(["action", "editEvent", "sortItemsEvent"]);
 let checkedItems: any = ref<Array<any>>([]);
 const props = defineProps<{
     items: Array<any>,
@@ -129,11 +159,10 @@ const filterRecord = (item: any) => {
     for (let i in filters.value) {
         let fl = filters.value[i];
 
-        //fl.item_type == 'PlainText' || fl.item_type == 'Color' || fl.item_type == 'RichText'
         if (enabledSearch.includes(fl.item_type)) {
             console.log("item value original string--", item[fl.column_key]);
             console.log("fal value string to be matched--", fl.value.toLowerCase());
-            if ('undefined'!=typeof(item[fl.column_key]) && !item[fl.column_key].toLowerCase().includes(fl.value.trim().toLowerCase())) {
+            if ('undefined' != typeof (item[fl.column_key]) && !item[fl.column_key].toLowerCase().includes(fl.value.trim().toLowerCase())) {
                 response = false;
             }
 
@@ -159,7 +188,13 @@ async function editCheckedData() {
         });
     }
 }
-editCheckedData()
+editCheckedData();
+
+const sortItems = (key: string, sortOrder: string) => {
+    emits('sortItemsEvent', { 'key': key, "sortOrder": sortOrder });
+}
+
+
 
 const allCheck = (event: any) => {
     if (event.target.checked) {

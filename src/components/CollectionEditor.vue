@@ -18,7 +18,7 @@
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
-            :referenceData="referenceData"></CustomList>
+            :referenceData="referenceData" @sortItemsEvent="sortItems"></CustomList>
     </div>
 </template>
 
@@ -161,7 +161,10 @@ async function collectionList() {
         let itemData = [];
         for (let i in result.data.items) {
             result.data.items[i].fieldData.item_id = result.data.items[i].id;
-            itemData.push(result.data.items[i].fieldData);
+            let tempData = result.data.items[i].fieldData;
+            tempData.createdOn = result.data.items[i].createdOn;
+            tempData.lastUpdated = result.data.items[i].lastUpdated;
+            itemData.push(tempData);
         }
         listItems.value = itemData;
 
@@ -210,6 +213,26 @@ function editHandler(data: any) {
         editedData[data.item_id][data.column_key] = data.new_value;
         editedCount.value = Object.keys(editedData).length;
     }
+}
+
+function sortItems(sortBy: any) {
+    let sorted = listItems.value;
+
+    if (sortBy.key) {
+
+        sorted = sorted.sort(function (a, b) {
+            let res = 0;
+            if (sortBy.sortOrder === 'ASC') {
+                res = a[sortBy.key] < b[sortBy.key] ? -1 : 1;
+            } else {
+                res = a[sortBy.key] > b[sortBy.key] ? -1 : 1;
+            }
+
+            return res;
+
+        });
+    }
+    listItems.value = sorted;
 }
 
 async function updateCollectionList() {

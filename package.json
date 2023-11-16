@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@vueuse/head": "2.0.0",
+    "moment": "^2.29.4",
     "pinia": "2.1.4",
     "sortablejs": "^1.15.0",
     "sortablejs-vue3": "^1.2.9",
