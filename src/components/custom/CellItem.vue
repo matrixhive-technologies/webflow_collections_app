@@ -37,7 +37,16 @@
             </span>
 
             <span v-else @click="editClickHandler">
-                {{ displayValue }}
+                <span class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400"
+                    v-if="props.item_type == 'PlainText'">
+                    
+                    {{ displayValue.length > 128 ? displayValue.slice(0, 127) + '...' :
+                        displayValue }}
+                </span>
+
+                <span class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400" v-else>
+                    {{ displayValue }}
+                </span>
             </span>
         </span>
 
