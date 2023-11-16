@@ -133,7 +133,7 @@ const filterRecord = (item: any) => {
         if (enabledSearch.includes(fl.item_type)) {
             console.log("item value original string--", item[fl.column_key]);
             console.log("fal value string to be matched--", fl.value.toLowerCase());
-            if (!item[fl.column_key].toLowerCase().includes(fl.value.trim().toLowerCase())) {
+            if ('undefined'!=typeof(item[fl.column_key]) && !item[fl.column_key].toLowerCase().includes(fl.value.trim().toLowerCase())) {
                 response = false;
             }
 
