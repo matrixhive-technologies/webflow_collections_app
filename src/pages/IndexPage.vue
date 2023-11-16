@@ -85,11 +85,7 @@ function collectionChangeHandler(change: any) {
   selectedCollectionId.value = change.new;
 }
 const userStoreObj = userStore();
-async function logout() {
-  userStoreObj.removeUser();
-  window.location.href = window.location.href;
-  //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
-}
+
 const router = useRouter()
 if (userStoreObj.isLoggedIn) {
   console.log(userStoreObj.authToken, "The auth token");
