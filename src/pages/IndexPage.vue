@@ -126,4 +126,5 @@ if (userStoreObj.isLoggedIn) {
       <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
     </div>
   </div>
+</div>
 </template>

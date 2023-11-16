@@ -30,6 +30,7 @@
 import ajax from "@/accessories/ajax";
 import CustomList from "@/components/custom/CustomList.vue";
 import Dropdown from "@/components/crud/fields/dropdown.vue";
+import { userStore } from '@/stores/user';
 
 const props = defineProps({
     selectedSiteId: { type: Number, default: 0 },
@@ -54,7 +55,12 @@ onMounted(() => {
     // Check if the element exists on mount
     elementExists.value = document.body.contains(document.querySelector('#columnsDropdown'));
 });
-
+const userStoreObj = userStore();
+async function logout() {
+  userStoreObj.removeUser();
+  window.location.href = window.location.href;
+  //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
+}
 
 // watch works directly on a ref
 watch(() => props.selectedCollectionId, (first, second) => {
