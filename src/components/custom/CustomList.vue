@@ -150,7 +150,7 @@
                                             Loading ...
                                         </slot>
                                         <slot v-else name="no_records">
-                                            No Records
+                                           <span class="text-sm font-medium text-gray-900 dark:text-white">No Records</span> 
                                         </slot>
                                     </td>
 
