@@ -94,11 +94,7 @@ if (userStoreObj.isLoggedIn) {
   router.push('login');
 }
 
-async function logout() {
-  userStoreObj.removeUser();
-  window.location.href = window.location.href;
-  //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
-}
+
 
 window.setInterval(function() {
   let aj = new (ajax as any)();

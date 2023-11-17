@@ -21,7 +21,7 @@
 
                     <button
                         class="w-[100px] h-[40px] mt-[35px] ml-5  focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                        type="button">Logout
+                        type="button" @click="logout">Logout
                     </button>
                 </div>
             </div>
@@ -37,6 +37,7 @@
 import ajax from "@/accessories/ajax";
 import CustomList from "@/components/custom/CustomList.vue";
 import Dropdown from "@/components/crud/fields/dropdown.vue";
+import { userStore } from '@/stores/user';
 
 const props = defineProps({
     selectedSiteId: { type: Number, default: 0 },
@@ -77,6 +78,12 @@ watch(() => props.selectedCollectionId, (first, second) => {
     editedCount.value = 0;
 });
 
+const userStoreObj = userStore();
+async function logout() {
+    userStoreObj.removeUser();
+    window.location.href = window.location.href;
+    //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
+}
 
 // Selected Collection's Field Type
 async function collectionFields() {
