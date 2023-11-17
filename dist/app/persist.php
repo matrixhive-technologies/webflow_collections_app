@@ -7,4 +7,3 @@ header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE PATCH');
 $_SESSION['last'] = time();
 
 echo json_encode(['message' => $_SESSION]);
-
