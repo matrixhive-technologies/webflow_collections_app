@@ -19,7 +19,7 @@
                 <img :src="displayValue?.url" class="w-20">
             </span>
             <span v-else-if="props.item_type == 'RichText'" class="break-words">
-                <div v-html="renderedContent"></div>
+                <div v-html="renderedContent" class="breakContent"></div>
             </span>
 
             <span v-else-if="props.item_type == 'Reference' || props.item_type == 'MultiReference'">
@@ -37,7 +37,7 @@
             </span>
 
             <span v-else @click="editClickHandler">
-                {{ displayValue }}
+                <div class="breakContent"> {{ displayValue }} </div>
             </span>
         </span>
 
@@ -90,3 +90,13 @@ const renderedContent = computed(() => {
 });
 
 </script>
+
+<style scoped>
+.breakContent {
+    width: 350px;
+    /* Set your desired width */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+</style>
