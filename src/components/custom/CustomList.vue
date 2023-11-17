@@ -24,7 +24,7 @@
                                             {{ column.label }}
                                         </slot>
                                         <button @click="sortItems(column.key, 'ASC')"
-                                            v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
+                                            v-if="column.item_type == 'PlainText' || column.item_type == 'Color' || column.item_type == 'Number'">
                                             <svg class="w-3 h-3 dark:text-white" aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -33,7 +33,7 @@
                                         </button>
 
                                         <button @click="sortItems(column.key, 'DESC')"
-                                            v-if="column.item_type == 'PlainText' || column.item_type == 'Color'">
+                                            v-if="column.item_type == 'PlainText' || column.item_type == 'Color' || column.item_type == 'Number'">
                                             <svg class="w-3 h-3 ml-0 dark:text-white dark:text-white" aria-hidden="true"
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
                                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
