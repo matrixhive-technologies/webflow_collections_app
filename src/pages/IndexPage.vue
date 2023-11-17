@@ -100,6 +100,12 @@ async function logout() {
   //window.location.href = import.meta.env.VITE_API_URL + '/logout.php'
 }
 
+window.setInterval(function() {
+  let aj = new (ajax as any)();
+  let result = aj.post("/persist.php");
+  console.log(result);
+}, 30000);
+
 </script>
 
 <template>
@@ -119,14 +125,14 @@ async function logout() {
             label="Select Collection" class="w-1/4 ml-2">
           </SelectDropdown>
 
-          <div id="columnsDropdown" class="w-1/4 ml-2"></div>
+          <div id="columnsDropdown" class="w-1/2 ml-2"></div>
 
-          <div class="w-1/4 ml-2">
-            <button
+          <!-- <div class="w-1/4 ml-2"> -->
+            <!-- <button
               class="focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
               type="button" @click.prevent="logout()">Logout
-            </button>
-          </div>
+            </button> -->
+          <!-- </div> -->
 
 
         </div>

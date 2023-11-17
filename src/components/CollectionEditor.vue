@@ -1,20 +1,31 @@
 <template>
     <div class="relative py-8">
-        <div v-if="editedCount > 0" class="text-right -mt-[93px] ">
-            <button type="button"
-                class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 my-5 ml-2"
-                @click="updateCollectionList()">
-                Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount + " Records" :
-                    '') }}
-            </button>
-        </div>
+
 
         <div v-if="editMessage" class="text-gray-50">{{ editMessage }} </div>
 
         <teleport to="#columnsDropdown" v-if="elementExists">
-            <Dropdown :options="listCols" :checkedOptions="checkedOptions" label="Select Columns to Display "
-                @change="columnChangeHandler" @showDates="(sd) => { showDates = sd; }">
-            </Dropdown>
+            <div class="flex">
+                <Dropdown :options="listCols" :checkedOptions="checkedOptions" label="Select Columns to Display "
+                    @change="columnChangeHandler" @showDates="(sd) => { showDates = sd; }">
+                </Dropdown>
+
+                <div class="text-right flex ">
+                    <button :class="editedCount > 0 ? '' : 'hhh'" type="button"
+                        class="w-[200px] h-[40px] ml-2 mt-[35px] items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        @click="updateCollectionList()">
+                        Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount +
+                            "Records" :
+                            '') }}
+                    </button>
+
+                    <button
+                        class="w-[100px] h-[40px] mt-[35px] ml-5  focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                        type="button">Logout
+                    </button>
+                </div>
+            </div>
+
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
@@ -301,3 +312,9 @@ async function updateCollectionList() {
 
 
 </script>
+
+<style scoped>
+.hhh {
+    opacity: 0;
+}
+</style>
