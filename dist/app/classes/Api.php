@@ -3,6 +3,7 @@
 error_reporting(1);
 ini_set('display_errors', true);
 require_once('config/app.php');
+require_once('config/database.php');
 
 
 class Api
@@ -16,6 +17,7 @@ class Api
 
     public function __construct()
     {
+        global $connection;
     }
 
     public function setEndPoint($endPoint)
@@ -77,6 +79,11 @@ class Api
 
     public function get()
     {
+        $cachedResponse = $this->getCachedResponse();
+        if ($cachedResponse) {
+            return $cachedResponse;
+        }
+
         $baseUrl = $this->apiBaseUrl;
         $url = $baseUrl . $this->endPoint;
 
@@ -97,6 +104,7 @@ class Api
             echo 'Error:' . curl_error($ch);
         }
         curl_close($ch);
+        $this->cacheResult($result);
         return $result;
     }
 
@@ -129,6 +137,12 @@ class Api
 
     public function post()
     {
+        $cachedResponse = $this->getCachedResponse();
+        if ($cachedResponse) {
+            return $cachedResponse;
+        }
+
+
         $baseUrl = $this->apiBaseUrl;
         $url = $baseUrl . $this->endPoint;
 
@@ -151,6 +165,63 @@ class Api
             echo 'Error:' . curl_error($ch);
         }
         curl_close($ch);
+
+        $this->cacheResult($result);
         return $result;
+    }
+
+
+    public function getCollectionID()
+    {
+        $collectionEndpoint = explode("/", $this->endPoint);
+        return !empty($collectionEndpoint) && isset($collectionEndpoint[1]) && $collectionEndpoint[0] == 'collections' ? $collectionEndpoint[1] : '';
+    }
+
+    public function getSiteID()
+    {
+        $siteEndpoint = explode("/", $this->endPoint);
+        return !empty($siteEndpoint) && isset($siteEndpoint[1]) && $siteEndpoint[0] == 'sites'  ? $siteEndpoint[1] : '';
+    }
+
+    public function getUserID()
+    {
+        return $_SESSION['LoggedInUser']['id'];
+    }
+
+    public function getCacheToken()
+    {
+        return md5($this->endPoint . $this->params);
+    }
+
+    public function getCachedResponse()
+    {
+        global $connection;
+
+        $cachedData = "SELECT * from cached_results WHERE `cache_token`='" . $this->getCacheToken() . "'";
+
+        $row = mysqli_fetch_assoc(mysqli_query($connection, $cachedData));
+
+        return $row['response'];
+    }
+
+    public function cacheResult($result)
+    {
+        global $connection;
+        $userId = $this->getUserID();
+        $cacheToken = $this->getCacheToken();
+        $siteId = $this->getSiteID();
+        $collectionId = $this->getCollectionID();
+
+        $cachData = "INSERT INTO `cached_results`(`user_id`, `site_id`, `collection_id`, `cache_token`, `response`) 
+                            VALUES (
+                            '" . $userId . "',
+                            '" . $siteId . "',
+                            '" . $collectionId . "',
+                            '" . $cacheToken . "',
+                            '" . mysqli_real_escape_string($connection, $result) . "'
+                            )";
+
+
+        return mysqli_query($connection, $cachData);
     }
 }
