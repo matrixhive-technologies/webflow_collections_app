@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 10, 2023 at 04:31 PM
+-- Generation Time: Nov 20, 2023 at 05:37 PM
 -- Server version: 8.0.35-0ubuntu0.22.04.1
 -- PHP Version: 8.1.2-1ubuntu2.14
 
@@ -42,6 +42,21 @@ CREATE TABLE `app_users` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `cached_results`
+--
+
+CREATE TABLE `cached_results` (
+  `id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `site_id` text COLLATE utf8mb4_general_ci,
+  `collection_id` text COLLATE utf8mb4_general_ci,
+  `cache_token` text COLLATE utf8mb4_general_ci,
+  `response` longtext COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_collections`
 --
 
@@ -52,6 +67,19 @@ CREATE TABLE `user_collections` (
   `selected_collections_json` longtext COLLATE utf8mb4_general_ci,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_sites`
+--
+
+CREATE TABLE `user_sites` (
+  `id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `sites_json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -66,9 +94,21 @@ ALTER TABLE `app_users`
   ADD KEY `fk_users_parent_user_id` (`parent_user_id`);
 
 --
+-- Indexes for table `cached_results`
+--
+ALTER TABLE `cached_results`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `user_collections`
 --
 ALTER TABLE `user_collections`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `user_sites`
+--
+ALTER TABLE `user_sites`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -82,9 +122,21 @@ ALTER TABLE `app_users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `cached_results`
+--
+ALTER TABLE `cached_results`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `user_collections`
 --
 ALTER TABLE `user_collections`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user_sites`
+--
+ALTER TABLE `user_sites`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
