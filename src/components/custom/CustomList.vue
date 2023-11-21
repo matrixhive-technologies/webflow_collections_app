@@ -145,7 +145,7 @@
                             </template>
                             <template v-else>
                                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <td :colspan="columns.length + 1" class="text-center">
+                                    <td :colspan="columns.length + 2" class="text-center">
                                         <slot v-if="loading" name="loading">
                                             Loading ...
                                         </slot>

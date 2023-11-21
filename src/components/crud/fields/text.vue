@@ -23,14 +23,14 @@
 
     const props = defineProps<{
         name: string,
-        label: string,
+        label?: string,
         required?: Boolean,
         placeholder?: string,
         is_valid?:Function,
         is_valid_num?:Function,
         error_message? : String ,
         type?:string ,
-        value?: String,
+        value?: any,
         disable?:boolean,
         max?:Number
     }>();

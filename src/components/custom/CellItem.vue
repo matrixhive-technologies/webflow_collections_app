@@ -16,7 +16,17 @@
                 </select>
             </span>
             <span v-else-if="props.item_type == 'Image'">
-                <img :src="displayValue?.url" class="w-20">
+                <img :src="displayValue?.url" class="w-20 cursor-pointer" @click="modalVisible = !modalVisible">
+                <span>
+                    <Modal :isVisible="modalVisible" @close="modalVisible = false" :class="modalClass">
+                        <template v-slot:header>
+                            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Item Image</h3>
+                        </template>
+                        <template v-slot:modal_content>
+                            <img :src="displayValue?.url" class="w-full">
+                        </template>
+                    </Modal>
+                </span>
             </span>
             <span v-else-if="props.item_type == 'RichText'" class="break-words">
                 <div v-html="renderedContent" class="breakContent"></div>
@@ -25,8 +35,8 @@
             <span v-else-if="props.item_type == 'Reference' || props.item_type == 'MultiReference'">
                 <div v-for="(collectionIdWiseData, collection_id, key) in referenceData" :key="key">
                     <select class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 
-                    block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                    dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+                                        dark:focus:ring-primary-500 dark:focus:border-primary-500"
                         :multiple="props.item_type == 'MultiReference' ? true : false" v-model="editValue"
                         @change="(event) => { blurHandler(event) }" v-if="collection_id == validations.collectionId">
                         <option v-for="data in collectionIdWiseData" :value=data.id>
@@ -45,10 +55,14 @@
 </template>
 
 <script setup lang="ts">
-
+import { Modal } from "@/components/functional";
 let editMode = ref<boolean>(false);
 
+let modalClass = 'w-[750px]';
+
 const emits = defineEmits(["editEvent"]);
+
+const modalVisible = ref<boolean>(false)
 
 const props = defineProps<{
     item_type?: string,
@@ -100,3 +114,4 @@ const renderedContent = computed(() => {
     text-overflow: ellipsis;
 }
 </style>
+            

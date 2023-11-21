@@ -4,8 +4,15 @@ import { SelectDropdown } from '@/components/crud'
 import ajax from "@/accessories/ajax";
 import { userStore } from '@/stores/user';
 import imageUrl from '@/assets/images/PL-logo-350.png';
+
+import AspectRatio from "@/components/custom/AspectRatio.vue";
+import { Form } from "@/components/crud"
 // useRoute, useHead, and HelloWorld are automatically imported. See vite.config.ts for details.
 const route = useRoute()
+
+let modalClass = 'w-[750px]';
+
+const modalVisible = ref<boolean>(false);
 
 useHead({
   title: route.meta.title,
@@ -23,8 +30,15 @@ useHead({
 
 let selectedSiteId = ref<number>(0);
 let selectedCollectionId = ref<number>(0);
+let collectionAspect = ref<number>(0);
 let sites = ref<Array<any>>([]);
 let collections = ref<Array<any>>([]);
+let renderKey = ref<number>(0);
+let renderDrodpown = ref<number>(0);
+let success = ref<String>('');
+
+let savedRatios = ref<Array<any>>([]);
+let ratioColumns = ref<any>();
 
 // Site Ids list
 async function listOfSites() {
@@ -77,8 +91,6 @@ async function siteCollection(siteId: any) {
     }
     collections.value = collectionDetails;
   }
-
-
 }
 
 function collectionChangeHandler(change: any) {
@@ -95,12 +107,86 @@ if (userStoreObj.isLoggedIn) {
 }
 
 
-
-window.setInterval(function() {
+window.setInterval(function () {
   let aj = new (ajax as any)();
   let result = aj.post("/persist.php");
   console.log(result);
 }, 30000);
+
+async function saveAspectRatio(data: any) {
+  let aj = new (ajax as any)();
+  data.selectedSiteId = selectedSiteId.value;
+  data.action = "save";
+  let result = await aj.post("/aspectRatio.php", data);
+  console.log('success', result);
+  if (result.status == 200) {
+    renderKey.value += 1;
+    success.value = result.data.message;
+    let asad = collectionAspect.value ? collectionAspect.value : selectedCollectionId.value;
+
+    listAspectRatio(selectedSiteId.value, asad);
+  }
+}
+
+function closeModal() {
+  success.value = '';
+  savedRatios.value = [];
+  modalVisible.value = !modalVisible.value;
+  collectionAspect.value = 0;
+}
+function openModal() {
+  modalVisible.value = !modalVisible.value;
+  listAspectRatio(selectedSiteId.value, selectedCollectionId.value);
+  renderDrodpown.value += 1;
+}
+
+ratioColumns.value =
+  [
+    { value: 'width', label: 'width' },
+    { value: 'height', label: 'height' },
+  ];
+
+async function listAspectRatio(siteId: any, collectionID: any) {
+  let aj = new (ajax as any)();
+  let data =
+  {
+    action: "list",
+    siteId: siteId,
+    collectionID: collectionID,
+  };
+  console.log('collection ID--', collectionID);
+  let result = await aj.post("/aspectRatio.php", data);
+  console.log('success list', result);
+  if (result.status == 200) {
+    savedRatios.value = result.data.listData;
+    console.log('savedRatios.value', savedRatios.value);
+
+  }
+
+}
+
+function getCollectionId(change: any) {
+  collectionAspect.value = change.new;
+  if (collectionAspect.value) {
+    listAspectRatio(selectedSiteId.value, collectionAspect.value);
+  }
+}
+
+async function deleteRatio(item_id: any) {
+  let aj = new (ajax as any)();
+  let data =
+  {
+    action: "delete",
+    itemId: item_id,
+  };
+  let result = await aj.post("/aspectRatio.php", data);
+  console.log('success list', result);
+  if (result.status == 200) {
+    success.value = result.data.message;
+    listAspectRatio(selectedSiteId.value, collectionAspect.value);
+  }
+}
+
 
 </script>
 
@@ -108,12 +194,67 @@ window.setInterval(function() {
   <div class="dark ">
     <div class=" mx-auto py-5 px-10 min-h-screen bg-gray-900">
       <div class="">
-
-
         <div class="flex items-end">
+
           <div class=" -mt-4">
             <img class="w-[60px] px-2" :src="imageUrl" />
           </div>
+
+          <!-- <button
+            class="focus:outline-none text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 mr-2"
+            type="button" @click="openModal" v-if="selectedSiteId && selectedCollectionId">Settings
+          </button> -->
+
+          <span>
+            <Modal :key="renderKey" :isVisible="modalVisible" @close="closeModal" :class="modalClass">
+              <template v-slot:header>
+                <h3 class="mb-4 text-s font-medium text-gray-900 dark:text-white">
+                  {{
+                    sites.find(item => item.value === selectedSiteId)
+                    ?
+                    'Aspect Ratio For ' + selectedCollectionId + "--" + sites.find(item => item.value
+                      === selectedSiteId).label
+                    : ''
+                  }}
+                </h3>
+              </template>
+              <template v-slot:modal_content>
+                <p v-if="success" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ success }}</p>
+
+                <Form @save="saveAspectRatio">
+                  <slot name="fields">
+
+                  </slot>
+                  <template #fields="{ refs }">
+                    <Select :key="renderDrodpown" name="collection_id" label="Select Collection"
+                      :value="collectionAspect ? collectionAspect : selectedCollectionId" :options="collections"
+                      :required="true" :ref="(ele: any) => { refs.push(ele) }" error_message="Please select collection"
+                      @change="getCollectionId">
+                    </Select>
+
+
+                    <Text name="width" label="Width (Enter Numeric value)" placeholder="250px..."
+                      error_message="Width is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
+                    </Text>
+
+                    <Text name="height" label="Height (Enter Numeric value)" placeholder="200px..."
+                      error_message="Height is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
+                    </Text>
+
+                  </template>
+                  <template #svg>
+                    <p></p>
+                  </template>
+                </Form>
+
+                <AspectRatio :items="savedRatios" :columns="ratioColumns" @delete-ratio="deleteRatio">
+                </AspectRatio>
+
+              </template>
+            </Modal>
+          </span>
+
+
           <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/4">
           </SelectDropdown>
 
@@ -121,15 +262,12 @@ window.setInterval(function() {
             label="Select Collection" class="w-1/4 ml-2">
           </SelectDropdown>
 
+          <button
+            class="focus:outline-none text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 mr-2 ml-4"
+            type="button" @click="openModal" v-if="selectedSiteId && selectedCollectionId">Settings
+          </button>
+
           <div id="columnsDropdown" class="w-1/2 ml-2"></div>
-
-          <!-- <div class="w-1/4 ml-2"> -->
-            <!-- <button
-              class="focus:outline-none text-white bg-red-700  hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-              type="button" @click.prevent="logout()">Logout
-            </button> -->
-          <!-- </div> -->
-
 
         </div>
 

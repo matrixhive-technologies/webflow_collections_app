@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Add: typeof import('./components/crud/add.vue')['default']
+    AspectRatio: typeof import('./components/custom/AspectRatio.vue')['default']
     Breadcrumb: typeof import('./components/functional/breadcrumb.vue')['default']
     Browse: typeof import('./components/crud/fields/browse.vue')['default']
     CellItem: typeof import('./components/custom/CellItem.vue')['default']
@@ -29,6 +30,7 @@ declare module 'vue' {
     LinkButton: typeof import('./components/functional/buttons/LinkButton.vue')['default']
     List: typeof import('./components/crud/list.vue')['default']
     ListItem: typeof import('./components/crud/list-item.vue')['default']
+    Modal: typeof import('./components/functional/modal.vue')['default']
     PageComponent: typeof import('./components/page/PageComponent.vue')['default']
     PageComponentContainer: typeof import('./components/page/PageComponentContainer.vue')['default']
     PageEditor: typeof import('./components/page/PageEditor.vue')['default']
