@@ -23,7 +23,11 @@
                             <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Item Image</h3>
                         </template>
                         <template v-slot:modal_content>
+                             {{ aspectRatios }}
                             <img :src="displayValue?.url" class="w-full">
+                            <SelectDropdown name="asad" label="asad" :options="aspectRatios">
+
+                            </SelectDropdown>
                         </template>
                     </Modal>
                 </span>
@@ -56,6 +60,7 @@
 
 <script setup lang="ts">
 import { Modal } from "@/components/functional";
+import { SelectDropdown } from '@/components/crud'
 let editMode = ref<boolean>(false);
 
 let modalClass = 'w-[750px]';
@@ -71,6 +76,7 @@ const props = defineProps<{
     item_id: string,
     validations?: any,
     referenceData?: any,
+    aspectRatios?: Array<any>,
 }>();
 
 let editValue = ref<string>(props.item_value);

@@ -129,7 +129,9 @@
                                             <CellItem :column_key="column.key" :item_value="item[column.key]"
                                                 :item_id="item['item_id']" @editEvent="editHandler"
                                                 :item_type="column.item_type" :validations="column.validations"
-                                                :referenceData="referenceData">
+                                                :referenceData="referenceData"
+                                                :aspectRatios="aspectRatios"
+                                                >
                                             </CellItem>
                                         </slot>
                                     </td>
@@ -179,6 +181,7 @@ const props = defineProps<{
     editData?: any,
     referenceData?: any,
     showDates?: boolean,
+    aspectRatios? : Array<any>,
 }>();
 
 let ckColumn = props.checkColumn ? props.checkColumn : "id";

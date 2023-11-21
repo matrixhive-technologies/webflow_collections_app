@@ -29,7 +29,8 @@
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
-            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates"></CustomList>
+            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates" :aspectRatios="asad">
+        </CustomList>
     </div>
 </template>
 
@@ -51,6 +52,10 @@ let editHistory = ref<Array<any>>([]);
 let editMessage = ref<string>('');
 let editedData: any = {};
 let editedCount = ref<number>(0);
+let savedRatios = ref<Array<any>>([]);
+let asad = ref<Array<any>>([]);
+
+
 
 let showDates = ref(true);
 
@@ -74,6 +79,7 @@ watch(() => props.selectedCollectionId, (first, second) => {
     );
     collectionFields();
     collectionList();
+    listAspectRatio();
     editedData = {};
     editedCount.value = 0;
 });
@@ -315,6 +321,31 @@ async function updateCollectionList() {
     console.log('Updated Data pushed', updateData);
 
 }
+
+
+async function listAspectRatio() {
+    let aj = new (ajax as any)();
+    console.log('asad1', props.selectedSiteId);
+    console.log('asad2', props.selectedCollectionId);
+    let data =
+    {
+        action: "list",
+        siteId: props.selectedSiteId,
+        collectionID: props.selectedCollectionId,
+    };
+    let result = await aj.post("/aspectRatio.php", data);
+    console.log('success list', result);
+    if (result.status == 200) {
+        savedRatios.value = result.data.listData;
+        for (let i in savedRatios.value) {
+            asad.value.push({ 'value': savedRatios.value[i].id, 'label': "Width:" + savedRatios.value[i].width + " Height:" + savedRatios.value[i].height });
+        }
+
+        console.log('asadddd', asad.value);
+    }
+
+}
+
 
 
 

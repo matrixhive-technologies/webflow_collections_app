@@ -122,9 +122,7 @@ async function saveAspectRatio(data: any) {
   if (result.status == 200) {
     renderKey.value += 1;
     success.value = result.data.message;
-    let asad = collectionAspect.value ? collectionAspect.value : selectedCollectionId.value;
-
-    listAspectRatio(selectedSiteId.value, asad);
+    listAspectRatio(selectedSiteId.value, collectionAspect.value ? collectionAspect.value : selectedCollectionId.value);
   }
 }
 
@@ -247,7 +245,7 @@ async function deleteRatio(item_id: any) {
                   </template>
                 </Form>
 
-                <AspectRatio :items="savedRatios" :columns="ratioColumns" @delete-ratio="deleteRatio">
+                <AspectRatio class="mt-2" :items="savedRatios" :columns="ratioColumns" @delete-ratio="deleteRatio">
                 </AspectRatio>
 
               </template>
