@@ -18,43 +18,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $file = $_FILES["uploaded_file"];
         if ($file["error"] === UPLOAD_ERR_OK) {
             $inputImagePath = $file["tmp_name"];
+
+            // Output image file
+            $targetFolder   = 'uploads/';
+            $targetFilename = $targetFolder . uniqid() . '.jpg';
+
+            // Desired crop dimensions
+            $cropWidth  = $_REQUEST['width'];
+            $cropHeight = $_REQUEST['height'];
+
+            // Load the image
+            $sourceImage = imagecreatefromjpeg($inputImagePath);
+
+            // Get the current dimensions of the image
+            $sourceWidth = imagesx($sourceImage);
+            $sourceHeight = imagesy($sourceImage);
+
+            // Calculate the crop position (centered in this example)
+            $cropX = ($sourceWidth - $cropWidth) / 2;
+            $cropY = ($sourceHeight - $cropHeight) / 2;
+
+            // Create a new image with the desired crop dimensions
+            $croppedImage = imagecreatetruecolor($cropWidth, $cropHeight);
+
+            // Perform the crop
+            imagecopy($croppedImage, $sourceImage, 0, 0, $cropX, $cropY, $cropWidth, $cropHeight);
+
+            // Save the cropped image
+            chmod($targetFolder, '0777');
+            imagejpeg($croppedImage, $targetFilename);
+
+            // Free up memory
+            imagedestroy($sourceImage);
+            imagedestroy($croppedImage);
+
+            echo 'Cropped image saved  and uploaded successfully to ' . $targetFilename;
         }
     } else {
-        $inputImagePath = $_REQUEST['image_url'];
+        $jpg = imagecreatefromjpeg($_REQUEST['image_url']);
+        $w = imagesx($jpg);
+        $h = imagesy($jpg);
+        $webp = imagecreatetruecolor($w, $h);
+        imagecopy($webp, $jpg, 0, 0, 0, 0, $w, $h);
+        $targetFolder   = 'public/uploads/';
+        imagewebp($webp, $targetFolder . uniqid() . '.webp');
+        imagedestroy($jpg);
+        imagedestroy($webp);
     }
 
     // Output image file
-    $targetFolder   = 'uploads/';
-    $targetFilename = $targetFolder . uniqid() . '.jpg';
+    // $targetFolder   = 'uploads/';
+    // $targetFilename = $targetFolder . uniqid() . '.jpg';
 
-    // Desired crop dimensions
-    $cropWidth  = $_REQUEST['width'];
-    $cropHeight = $_REQUEST['height'];
+    // // Desired crop dimensions
+    // $cropWidth  = $_REQUEST['width'];
+    // $cropHeight = $_REQUEST['height'];
 
-    // Load the image
-    $sourceImage = imagecreatefromjpeg($inputImagePath);
+    // // Load the image
+    // $sourceImage = imagecreatefromjpeg($inputImagePath);
 
-    // Get the current dimensions of the image
-    $sourceWidth = imagesx($sourceImage);
-    $sourceHeight = imagesy($sourceImage);
+    // // Get the current dimensions of the image
+    // $sourceWidth = imagesx($sourceImage);
+    // $sourceHeight = imagesy($sourceImage);
 
-    // Calculate the crop position (centered in this example)
-    $cropX = ($sourceWidth - $cropWidth) / 2;
-    $cropY = ($sourceHeight - $cropHeight) / 2;
+    // // Calculate the crop position (centered in this example)
+    // $cropX = ($sourceWidth - $cropWidth) / 2;
+    // $cropY = ($sourceHeight - $cropHeight) / 2;
 
-    // Create a new image with the desired crop dimensions
-    $croppedImage = imagecreatetruecolor($cropWidth, $cropHeight);
+    // // Create a new image with the desired crop dimensions
+    // $croppedImage = imagecreatetruecolor($cropWidth, $cropHeight);
 
-    // Perform the crop
-    imagecopy($croppedImage, $sourceImage, 0, 0, $cropX, $cropY, $cropWidth, $cropHeight);
+    // // Perform the crop
+    // imagecopy($croppedImage, $sourceImage, 0, 0, $cropX, $cropY, $cropWidth, $cropHeight);
 
-    // Save the cropped image
-    chmod($targetFolder, '0777');
-    imagejpeg($croppedImage, $targetFilename);
+    // // Save the cropped image
+    // chmod($targetFolder, '0777');
+    // imagejpeg($croppedImage, $targetFilename);
 
-    // Free up memory
-    imagedestroy($sourceImage);
-    imagedestroy($croppedImage);
+    // // Free up memory
+    // imagedestroy($sourceImage);
+    // imagedestroy($croppedImage);
 
-    echo 'Cropped image saved  and uploaded successfully to ' . $targetFilename;
+    // echo 'Cropped image saved  and uploaded successfully to ' . $targetFilename;
 }

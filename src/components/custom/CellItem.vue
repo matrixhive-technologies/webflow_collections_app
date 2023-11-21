@@ -23,11 +23,20 @@
                             <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Item Image</h3>
                         </template>
                         <template v-slot:modal_content>
-                             {{ aspectRatios }}
-                            <img :src="displayValue?.url" class="w-full">
-                            <SelectDropdown name="asad" label="asad" :options="aspectRatios">
 
+                            <img :src="displayValue?.url" class="w-full mb-2">
+                            <!-- <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios"
+                                        class="mb-2">
+                                    </SelectDropdown> -->
+                            <button
+                                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                @click="optimiseImage">Optimise</button>
+
+                            <!-- <img :src="displayValue?.url" class="w-full mb-2">
+                            <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios" class="mb-2">
                             </SelectDropdown>
+                            <button
+                                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Optimise</button> -->
                         </template>
                     </Modal>
                 </span>
@@ -59,8 +68,8 @@
 </template>
 
 <script setup lang="ts">
+import ajax from "@/accessories/ajax";
 import { Modal } from "@/components/functional";
-import { SelectDropdown } from '@/components/crud'
 let editMode = ref<boolean>(false);
 
 let modalClass = 'w-[750px]';
@@ -108,6 +117,19 @@ const renderedContent = computed(() => {
     tempElement.classList.add('break-all');
     return tempElement.textContent || tempElement.innerText;
 });
+
+async function optimiseImage() {
+    let aj = new (ajax as any)();
+    let data =
+    {
+        image_url: displayValue.value.url,
+    };
+    let result = await aj.post("/image.php", data);
+    console.log('success optimise', result);
+    if (result.status == 200) {
+
+    }
+}
 
 </script>
 

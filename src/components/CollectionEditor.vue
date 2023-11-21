@@ -338,10 +338,8 @@ async function listAspectRatio() {
     if (result.status == 200) {
         savedRatios.value = result.data.listData;
         for (let i in savedRatios.value) {
-            asad.value.push({ 'value': savedRatios.value[i].id, 'label': "Width:" + savedRatios.value[i].width + " Height:" + savedRatios.value[i].height });
+            asad.value.push({ 'value': savedRatios.value[i].width + "---" + savedRatios.value[i].height, 'label': "Width:" + savedRatios.value[i].width + "px" + " Height:" + savedRatios.value[i].height + "px" });
         }
-
-        console.log('asadddd', asad.value);
     }
 
 }
