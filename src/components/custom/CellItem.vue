@@ -18,41 +18,40 @@
             <span v-else-if="props.item_type == 'Image'">
                 <img :src="displayValue?.url" class="w-20 cursor-pointer" @click="modalVisible = !modalVisible">
                 <span>
-                    <Modal :key="renderKey" :isVisible="modalVisible" @close="modalVisible = false" :class="modalClass">
+                    <Modal :key="renderKey" :isVisible="modalVisible" @close="closeModal" :class="modalClass">
                         <template v-slot:header>
                             <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Item Image</h3>
                         </template>
                         <template v-slot:modal_content>
-                            <span v-if="optimiseMessage" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{
-                                optimiseMessage }}</span>
-                            <img :src="displayValue?.url" class="w-full mb-2">
-                            <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
-                                Original Size: {{ originalBytes }} Bytes
-                            </p>
-                            <p v-if="optimisedBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">Size
-                                after optimisation: {{
-                                    optimisedBytes
-                                }} Bytes
-                            </p>
+                            <template v-if="showInitialContent">
+        <!-- Initial Content -->
+        <span v-if="optimiseMessage" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ optimiseMessage }}</span>
+        <img :src="displayValue?.url" class="w-full mb-2">
+        <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
+          Original Size: {{ originalBytes }} Bytes
+        </p>
+        <!-- ... other content ... -->
 
-                            <p v-if="originalBytes > 0 && optimisedBytes > 0"
-                                class="mb-4 text-m font-medium text-gray-900 dark:text-white">Number of Bytes Saved: {{
-                                    originalBytes - optimisedBytes
-                                }} Bytes
-                            </p>
-
-                            <!-- <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios"
-                                        class="mb-2">
-                                    </SelectDropdown> -->
-                            <button :class="{ 'opacity-50 cursor-not-allowed': optimiseButtonDisable }"
+        <button :class="{ 'opacity-50 cursor-not-allowed': optimiseButtonDisable }"
                                 class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                                 @click="optimiseImage(column_key)" :disabled="optimiseButtonDisable">Optimise</button>
-
-                            <!-- <img :src="displayValue?.url" class="w-full mb-2">
-                            <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios" class="mb-2">
-                            </SelectDropdown>
-                            <button
-                                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Optimise</button> -->
+        
+        <button
+          class="focus:outline-none text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 float-right"
+          @click="onUploadNewClick"
+        >
+          Upload New
+        </button>
+      </template>
+      <template v-else>
+        <!-- Form for Upload New -->
+        <span v-if="uploadMessage" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ uploadMessage }}</span>
+        
+        <form @submit.prevent="onUploadFormSubmit">
+          <input type="file"  ref="fileInputRef"  accept="image/*" required />
+          <button type="submit" :class="{ 'opacity-50 cursor-not-allowed': uploadButtonDisable }" class="bg-green-500 text-white px-4 py-2 rounded-lg mt-2" :disabled="uploadButtonDisable">Upload</button>
+        </form>
+      </template>
                         </template>
                     </Modal>
                 </span>
@@ -93,8 +92,92 @@ let modalClass = 'w-[750px]';
 let renderKey = ref<number>(0);
 
 const emits = defineEmits(["editEvent"]);
+const showInitialContent = ref(true);
 
 const modalVisible = ref<boolean>(false)
+
+let fileInputRef = ref(null);
+
+let uploadMessage = ref('');
+let uploadButtonDisable = ref(false);
+const onUploadNewClick = () => {
+      showInitialContent.value = false;
+}
+async function onUploadFormSubmit() {
+    uploadButtonDisable.value = true;
+    let aj = new (ajax as any)();
+
+    let data =
+    {
+        uploaded_file: fileInputRef.value.files[0] ,
+    };
+    let result = await aj.post("/image.php", data);
+    // if(result.data.code == 200) {
+    //     displayValue.value.url = result.data.url;
+    //     modalVisible.value = !modalVisible.value;
+    //     console.log('upload result',result);
+    // }
+
+    if (result.data.code == 200) {
+        displayValue.value.url = result.data.url;
+        let fieldData = {};
+        fieldData = { "isArchived": false, "isDraft": false, "fieldData": { [props.column_key]: { "url": result.data.url } } };
+
+        let data2 =
+        {
+            method: 'PATCH',
+            endPoint: "collections/" + [props.collectionID] + "/items/" + [props.item_id],
+            params: JSON.stringify(fieldData),
+        };
+
+        console.log('data2', data2);
+
+        let result2 = await aj.post("/CallApi.php", data2);
+        console.log('result 2', result2);
+        if (result2.status == 200) {
+            let publishData = {};
+            let itemIdsArr = [];
+            itemIdsArr.push(props.item_id);
+            publishData = { itemIds: itemIdsArr };
+
+
+            let data3 =
+            {
+                method: 'POST',
+                endPoint: "collections/" + [props.collectionID] + "/items/publish",
+                params: JSON.stringify(publishData),
+            };
+
+            let publishResult = await aj.post("/CallApi.php", data3);
+
+
+            if (publishResult.data.errors.length > 0) {
+                uploadMessage.value = publishResult.data.errors[0];
+                return false;
+            } else {
+                uploadButtonDisable.value = false;
+                uploadMessage.value = 'New Image is uploaded to webflow ';
+                setTimeout(function() {
+                    modalVisible.value = !modalVisible.value;
+                    showInitialContent.value = true;
+                    uploadMessage.value = '';
+                }, 2000);
+            }
+        }
+    } else {
+        uploadMessage.value = 'Something went wrong';
+    }
+
+    //   showInitialContent.value = true;
+       
+}
+
+const closeModal = () => {
+    modalVisible.value = !modalVisible.value ;
+    showInitialContent.value = true;
+    optimiseMessage.value = '';
+    uploadMessage.value = '';
+}
 
 const props = defineProps<{
     item_type?: string,
@@ -116,8 +199,6 @@ let optimiseButtonDisable = ref(false);
 
 let originalBytes = ref<number>(0);
 let optimisedBytes = ref<number>(0);
-
-let optimisedImgUrl = ref('');
 
 const blurHandler = (event: any) => {
     editMode.value = false;
