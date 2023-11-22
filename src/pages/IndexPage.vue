@@ -181,7 +181,7 @@ async function deleteRatio(item_id: any) {
   console.log('success list', result);
   if (result.status == 200) {
     success.value = result.data.message;
-    listAspectRatio(selectedSiteId.value, collectionAspect.value);
+    listAspectRatio(selectedSiteId.value, collectionAspect.value ? collectionAspect.value : selectedCollectionId.value);
   }
 }
 
