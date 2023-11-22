@@ -55,15 +55,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo 'Cropped image saved  and uploaded successfully to ' . $targetFilename;
         }
     } else {
-        $jpg = imagecreatefromjpeg($_REQUEST['image_url']);
-        $w = imagesx($jpg);
-        $h = imagesy($jpg);
-        $webp = imagecreatetruecolor($w, $h);
-        imagecopy($webp, $jpg, 0, 0, 0, 0, $w, $h);
-        $targetFolder   = 'public/uploads/';
-        imagewebp($webp, $targetFolder . uniqid() . '.webp');
-        imagedestroy($jpg);
-        imagedestroy($webp);
+        $extension = pathinfo($_REQUEST['image_url'], PATHINFO_EXTENSION);
+        
+        switch ($extension) {
+            case 'jpeg':
+            case 'jpg':
+                $image = imagecreatefromjpeg($_REQUEST['image_url']);
+                break;
+            case 'png':
+                $image = imagecreatefrompng($_REQUEST['image_url']);
+                break;
+            case 'gif':
+                $image = imagecreatefromgif($_REQUEST['image_url']);
+                break;
+            default:
+                die('Unsupported image type');
+        }
+        $outputPath = 'uploads/' . uniqid() . '.webp';
+
+        $outputFolder = dirname($outputPath);
+        if (!is_dir($outputFolder)) {
+            mkdir($outputFolder, 0755, true);
+        }
+
+        // Save the image as WebP
+        imagewebp($image, $outputPath);
+
+        // Free up memory
+        imagedestroy($image);
+
+        $webPImageUrl = UPLOAD_PATH . $outputPath;
+        echo json_encode(['code' => 200, 'url' => $webPImageUrl]);
     }
 
     // Output image file

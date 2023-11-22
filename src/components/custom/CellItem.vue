@@ -127,7 +127,7 @@ async function optimiseImage() {
     let result = await aj.post("/image.php", data);
     console.log('success optimise', result);
     if (result.status == 200) {
-
+        
     }
 }
 
