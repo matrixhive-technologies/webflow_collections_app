@@ -154,6 +154,11 @@ async function optimiseImage(column_key: any) {
     let result = await aj.post("/image.php", data);
     console.log('success optimise', result.data.url);
     if (result.data.code == 200) {
+
+        if (result.data.extension == 'webp') {
+            optimiseMessage.value = 'Already optimised';
+            return false;
+        }
         originalBytes.value = result.data.originalBytes;
         optimisedBytes.value = result.data.optimisedBytes;
         let fieldData = {};

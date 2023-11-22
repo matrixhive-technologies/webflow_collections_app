@@ -56,7 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         $extension = pathinfo($_REQUEST['image_url'], PATHINFO_EXTENSION);
-
+        if($extension == 'webp') {
+            echo json_encode([
+                'code' => 200,
+                'extension' => $extension,
+                'message' => 'Already optimised',
+            ]);
+            return false;
+        }
         // Download the image content
         $imageContent = file_get_contents($_REQUEST['image_url']);
         if ($imageContent) {
@@ -75,9 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'gif':
                 $image = imagecreatefromgif($_REQUEST['image_url']);
                 break;
-            case 'webp':
-                $image = imagecreatefromwebp($_REQUEST['image_url']);
-                break;
+            // case 'webp':
+            //     $image = imagecreatefromwebp($_REQUEST['image_url']);
+            //     break;
             default:
                 die('Unsupported image type');
         }
