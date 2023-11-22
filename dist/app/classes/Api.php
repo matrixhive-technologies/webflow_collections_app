@@ -110,6 +110,9 @@ class Api
 
     public function patch()
     {
+
+        $this->deleteCache();
+
         $baseUrl = $this->apiBaseUrl;
         $url = $baseUrl . $this->endPoint;
 
@@ -223,5 +226,21 @@ class Api
 
 
         return mysqli_query($connection, $cachData);
+    }
+
+    public function deleteCache()
+    {
+        global $connection;
+        $userId = $this->getUserID();
+        $collectionId = $this->getCollectionID();
+
+        $deleteCache = "DELETE FROM cached_results WHERE 
+            user_id= '" . $userId . "' 
+            AND
+            collection_id= '" . $collectionId . "'
+            ";
+
+
+        return mysqli_query($connection, $deleteCache);
     }
 }

@@ -166,8 +166,10 @@ async function optimiseImage(column_key: any) {
             params: JSON.stringify(fieldData),
         };
 
-        let result2 = await aj.post("/CallApi.php", data2);
+        console.log('data2', data2);
 
+        let result2 = await aj.post("/CallApi.php", data2);
+        console.log('result 2', result2);
         if (result2.status == 200) {
             let publishData = {};
             let itemIdsArr = [];

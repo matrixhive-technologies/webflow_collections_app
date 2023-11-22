@@ -85,7 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $outputFolder = dirname($outputPath);
         if (!is_dir($outputFolder)) {
-            mkdir($outputFolder, 0755, true);
+            $asad =  mkdir($outputFolder, 0755, true);
+
+            if ($asad === false) {
+                $error = error_get_last();
+                echo 'Failed to create directory: ' . $error['message'];
+            }
+            chmod($outputFolder, 0755);
         }
 
         // Save the image as WebP
