@@ -23,14 +23,30 @@
                             <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Item Image</h3>
                         </template>
                         <template v-slot:modal_content>
-
+                            <span v-if="optimiseMessage" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{
+                                optimiseMessage }}</span>
                             <img :src="displayValue?.url" class="w-full mb-2">
+                            <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
+                                Original Size: {{ originalBytes }} Bytes
+                            </p>
+                            <p v-if="optimisedBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">Size
+                                after optimisation: {{
+                                    optimisedBytes
+                                }} Bytes
+                            </p>
+
+                            <p v-if="originalBytes > 0 && optimisedBytes > 0"
+                                class="mb-4 text-m font-medium text-gray-900 dark:text-white">Number of Bytes Saved: {{
+                                    originalBytes - optimisedBytes
+                                }} Bytes
+                            </p>
+
                             <!-- <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios"
                                         class="mb-2">
                                     </SelectDropdown> -->
-                            <button
+                            <button :class="{ 'opacity-50 cursor-not-allowed': optimiseButtonDisable }"
                                 class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                @click="optimiseImage">Optimise</button>
+                                @click="optimiseImage(column_key)" :disabled="optimiseButtonDisable">Optimise</button>
 
                             <!-- <img :src="displayValue?.url" class="w-full mb-2">
                             <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios" class="mb-2">
@@ -86,11 +102,18 @@ const props = defineProps<{
     validations?: any,
     referenceData?: any,
     aspectRatios?: Array<any>,
+    collectionID?: any,
 }>();
 
 let editValue = ref<string>(props.item_value);
 let displayValue = ref<any>(props.item_value);
 
+let optimiseMessage = ref<string>('');
+
+let optimiseButtonDisable = ref(false);
+
+let originalBytes = ref<number>(0);
+let optimisedBytes = ref<number>(0);
 
 const blurHandler = (event: any) => {
     editMode.value = false;
@@ -118,16 +141,64 @@ const renderedContent = computed(() => {
     return tempElement.textContent || tempElement.innerText;
 });
 
-async function optimiseImage() {
+
+// optimise the image and convert it to webP.
+async function optimiseImage(column_key: any) {
+    optimiseMessage.value = '';
+    optimiseButtonDisable.value = true;
     let aj = new (ajax as any)();
     let data =
     {
         image_url: displayValue.value.url,
     };
     let result = await aj.post("/image.php", data);
-    console.log('success optimise', result);
-    if (result.status == 200) {
-        
+    console.log('success optimise', result.data.url);
+    if (result.data.code == 200) {
+        originalBytes.value = result.data.originalBytes;
+        optimisedBytes.value = result.data.optimisedBytes;
+        let fieldData = {};
+        fieldData = { "isArchived": false, "isDraft": false, "fieldData": { [column_key]: { "url": result.data.url } } };
+
+        let data2 =
+        {
+            method: 'PATCH',
+            endPoint: "collections/" + [props.collectionID] + "/items/" + [props.item_id],
+            params: JSON.stringify(fieldData),
+        };
+
+        let result2 = await aj.post("/CallApi.php", data2);
+
+        if (result2.status == 200) {
+            let publishData = {};
+            let itemIdsArr = [];
+            itemIdsArr.push(props.item_id);
+            publishData = { itemIds: itemIdsArr };
+
+
+            let data3 =
+            {
+                method: 'POST',
+                endPoint: "collections/" + [props.collectionID] + "/items/publish",
+                params: JSON.stringify(publishData),
+            };
+
+            let publishResult = await aj.post("/CallApi.php", data3);
+
+            console.log(publishResult.data);
+            optimiseButtonDisable.value = false;
+
+            if (publishResult.data.errors.length > 0) {
+                optimiseMessage.value = publishResult.data.errors[0];
+                return false;
+            } else {
+                let diff = originalBytes.value - optimisedBytes.value;
+                optimiseMessage.value = 'Image converted to webP and ' + (diff > 0 ? diff : 0) + " bytes saved.";
+
+            }
+        }
+    } else {
+        optimiseMessage.value = 'Something went wrong';
+        optimiseButtonDisable.value = false;
     }
 }
 

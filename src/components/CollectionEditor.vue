@@ -29,7 +29,9 @@
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
-            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates" :aspectRatios="asad">
+            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates" :aspectRatios="aspectRatiosArr"
+            :collectionID="selectedCollectionId"
+            >
         </CustomList>
     </div>
 </template>
@@ -53,7 +55,7 @@ let editMessage = ref<string>('');
 let editedData: any = {};
 let editedCount = ref<number>(0);
 let savedRatios = ref<Array<any>>([]);
-let asad = ref<Array<any>>([]);
+let aspectRatiosArr = ref<Array<any>>([]);
 
 
 
@@ -271,6 +273,7 @@ async function updateCollectionList() {
     let publishData = {};
     for (let i in editedData) {
         updateData = { "isArchived": false, "isDraft": false, fieldData: editedData[i] };
+
         let data =
         {
             method: 'PATCH',
@@ -325,8 +328,8 @@ async function updateCollectionList() {
 
 async function listAspectRatio() {
     let aj = new (ajax as any)();
-    console.log('asad1', props.selectedSiteId);
-    console.log('asad2', props.selectedCollectionId);
+    console.log('aspectRatiosArr1', props.selectedSiteId);
+    console.log('aspectRatiosArr2', props.selectedCollectionId);
     let data =
     {
         action: "list",
@@ -338,7 +341,7 @@ async function listAspectRatio() {
     if (result.status == 200) {
         savedRatios.value = result.data.listData;
         for (let i in savedRatios.value) {
-            asad.value.push({ 'value': savedRatios.value[i].width + "---" + savedRatios.value[i].height, 'label': "Width:" + savedRatios.value[i].width + "px" + " Height:" + savedRatios.value[i].height + "px" });
+            aspectRatiosArr.value.push({ 'value': savedRatios.value[i].width + "---" + savedRatios.value[i].height, 'label': "Width:" + savedRatios.value[i].width + "px" + " Height:" + savedRatios.value[i].height + "px" });
         }
     }
 

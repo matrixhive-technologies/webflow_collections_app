@@ -125,12 +125,12 @@
 
                                     <td v-for="column in columns" class="break-words"
                                         :class="column.class ? column.class : ' p-4 text-sm font-normal text-gray-500 dark:text-gray-400'">
-                                        <slot :name="`cell(${column.key})`" :item="item" :index="index">
+                                        <slot :name="`cell(${column.key})`" :item="item" :index="index"> 
                                             <CellItem :column_key="column.key" :item_value="item[column.key]"
                                                 :item_id="item['item_id']" @editEvent="editHandler"
                                                 :item_type="column.item_type" :validations="column.validations"
-                                                :referenceData="referenceData"
-                                                :aspectRatios="aspectRatios"
+                                                :referenceData="referenceData" :aspectRatios="aspectRatios"
+                                                :collectionID="collectionID"
                                                 >
                                             </CellItem>
                                         </slot>
@@ -152,7 +152,8 @@
                                             Loading ...
                                         </slot>
                                         <slot v-else name="no_records">
-                                           <span class="text-sm font-medium text-gray-900 dark:text-white">No Records</span> 
+                                            <span class="text-sm font-medium text-gray-900 dark:text-white">No
+                                                Records</span>
                                         </slot>
                                     </td>
 
@@ -181,7 +182,8 @@ const props = defineProps<{
     editData?: any,
     referenceData?: any,
     showDates?: boolean,
-    aspectRatios? : Array<any>,
+    aspectRatios?: Array<any>,
+    collectionID?: any
 }>();
 
 let ckColumn = props.checkColumn ? props.checkColumn : "id";

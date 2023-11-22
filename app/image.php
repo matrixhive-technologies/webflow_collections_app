@@ -56,7 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         $extension = pathinfo($_REQUEST['image_url'], PATHINFO_EXTENSION);
-        
+
+        // Download the image content
+        $imageContent = file_get_contents($_REQUEST['image_url']);
+        if ($imageContent) {
+            $originalBytes = strlen($imageContent);
+        }
+
+
         switch ($extension) {
             case 'jpeg':
             case 'jpg':
@@ -67,6 +74,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 break;
             case 'gif':
                 $image = imagecreatefromgif($_REQUEST['image_url']);
+                break;
+            case 'webp':
+                $image = imagecreatefromwebp($_REQUEST['image_url']);
                 break;
             default:
                 die('Unsupported image type');
@@ -79,13 +89,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Save the image as WebP
-        imagewebp($image, $outputPath);
+        $imageResponse = imagewebp($image, $outputPath);
 
         // Free up memory
         imagedestroy($image);
 
         $webPImageUrl = UPLOAD_PATH . $outputPath;
-        echo json_encode(['code' => 200, 'url' => $webPImageUrl]);
+        if ($imageResponse) {
+            echo json_encode([
+                'code' => 200,
+                'url' => $webPImageUrl,
+                'optimisedBytes' => filesize($outputPath),
+                'originalBytes'  => $originalBytes
+            ]);
+        } else {
+            echo json_encode(['code' => 400]);
+        }
     }
 
     // Output image file
