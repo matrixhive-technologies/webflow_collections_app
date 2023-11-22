@@ -2,7 +2,7 @@
 
 $servername = "localhost";
 $username   = "root";
-$password   = "12345678";
+$password   = "";
 $dbname     = "webflow_collections_db";
 
 // Create connection

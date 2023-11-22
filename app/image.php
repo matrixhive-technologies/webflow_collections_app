@@ -59,8 +59,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if($extension == 'webp') {
             echo json_encode([
                 'code' => 200,
-                'extension' => $extension,
-                'message' => 'Already optimised',
+                'url' => $_REQUEST['image_url'],
+                'optimisedBytes' => 0,
+                'originalBytes'  => 0
             ]);
             return false;
         }

@@ -18,7 +18,7 @@
             <span v-else-if="props.item_type == 'Image'">
                 <img :src="displayValue?.url" class="w-20 cursor-pointer" @click="modalVisible = !modalVisible">
                 <span>
-                    <Modal :isVisible="modalVisible" @close="modalVisible = false" :class="modalClass">
+                    <Modal :key="renderKey" :isVisible="modalVisible" @close="modalVisible = false" :class="modalClass">
                         <template v-slot:header>
                             <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Item Image</h3>
                         </template>
@@ -90,6 +90,8 @@ let editMode = ref<boolean>(false);
 
 let modalClass = 'w-[750px]';
 
+let renderKey = ref<number>(0);
+
 const emits = defineEmits(["editEvent"]);
 
 const modalVisible = ref<boolean>(false)
@@ -114,6 +116,8 @@ let optimiseButtonDisable = ref(false);
 
 let originalBytes = ref<number>(0);
 let optimisedBytes = ref<number>(0);
+
+let optimisedImgUrl = ref('');
 
 const blurHandler = (event: any) => {
     editMode.value = false;
@@ -144,21 +148,24 @@ const renderedContent = computed(() => {
 
 // optimise the image and convert it to webP.
 async function optimiseImage(column_key: any) {
-    optimiseMessage.value = '';
     optimiseButtonDisable.value = true;
     let aj = new (ajax as any)();
     let data =
     {
-        image_url: displayValue.value.url,
+        image_url: displayValue.value.url ,
     };
     let result = await aj.post("/image.php", data);
     console.log('success optimise', result.data.url);
     if (result.data.code == 200) {
-
-        if (result.data.extension == 'webp') {
-            optimiseMessage.value = 'Already optimised';
-            return false;
-        }
+        renderKey.value+=1;
+        displayValue.value.url = result.data.url;
+        // if (result.data.extension == 'webp') {
+        //     optimiseButtonDisable.value = true;
+        //     optimiseMessage.value = 'Already optimised';
+        //     originalBytes.value = 0;
+        //     optimisedBytes.value = 0;
+        //     return false;
+        // }
         originalBytes.value = result.data.originalBytes;
         optimisedBytes.value = result.data.optimisedBytes;
         let fieldData = {};
@@ -199,8 +206,11 @@ async function optimiseImage(column_key: any) {
                 return false;
             } else {
                 let diff = originalBytes.value - optimisedBytes.value;
-                optimiseMessage.value = 'Image converted to webP and ' + (diff > 0 ? diff : 0) + " bytes saved.";
-
+                if(diff > 0) {
+                optimiseMessage.value = 'Image converted to webP and ' + diff+" bytes are saved.";
+                } else {
+                    optimiseMessage.value = 'Image is already optimised';
+                }
             }
         }
     } else {
