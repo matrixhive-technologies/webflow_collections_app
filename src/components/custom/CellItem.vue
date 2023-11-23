@@ -102,6 +102,7 @@ let uploadMessage = ref('');
 let uploadButtonDisable = ref(false);
 const onUploadNewClick = () => {
       showInitialContent.value = false;
+      uploadButtonDisable.value = false;
 }
 async function onUploadFormSubmit() {
     uploadButtonDisable.value = true;
@@ -166,6 +167,7 @@ async function onUploadFormSubmit() {
         }
     } else {
         uploadMessage.value = 'Something went wrong';
+        uploadButtonDisable.value = false;
     }
 
     //   showInitialContent.value = true;
@@ -177,6 +179,7 @@ const closeModal = () => {
     showInitialContent.value = true;
     optimiseMessage.value = '';
     uploadMessage.value = '';
+    uploadButtonDisable.value = false;
 }
 
 const props = defineProps<{
