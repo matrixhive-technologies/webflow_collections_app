@@ -262,6 +262,7 @@ async function removeCache() {
         cacheRemoveSuccess.value = 'Cached Removed Successfully';
         setTimeout(function () {
             cacheRemoveSuccess.value = '';
+            window.location.href = window.location.href;
         }, 2000);
     }
 }

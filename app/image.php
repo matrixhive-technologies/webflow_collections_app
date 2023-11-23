@@ -13,6 +13,18 @@ if (!$_SESSION['LoggedInUser']) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    # Unlink Image goes here.
+    if($_REQUEST['action'] == 'unlinkImg') {
+        if(!empty($_REQUEST['img_path'])) {
+            unlink($_REQUEST['img_path']);
+            echo json_encode(['code' => 200, 'message' => 'Image Unlinked successfully']);
+        } else {
+            echo json_encode(['code' => 400, 'message' => 'Something went wrong']);
+        }
+        return false;
+    }
+
     if (isset($_FILES["uploaded_file"])) {
         $file = $_FILES["uploaded_file"];
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -55,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode([
                 'code' => 200,
                 'url' => $webPImageUrl,
+                'outputPath' => $outputPath,
             ]);
         } else {
             echo json_encode(['code' => 400]);
@@ -169,7 +182,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'code' => 200,
                 'url' => $webPImageUrl,
                 'optimisedBytes' => filesize($outputPath),
-                'originalBytes'  => $originalBytes
+                'originalBytes'  => $originalBytes,
+                'outputPath' => $outputPath
             ]);
         } else {
             echo json_encode(['code' => 400]);

@@ -24,34 +24,47 @@
                         </template>
                         <template v-slot:modal_content>
                             <template v-if="showInitialContent">
-        <!-- Initial Content -->
-        <span v-if="optimiseMessage" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ optimiseMessage }}</span>
-        <img :src="displayValue?.url" class="w-full mb-2">
-        <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
-          Original Size: {{ originalBytes }} Bytes
-        </p>
-        <!-- ... other content ... -->
+                                <!-- Initial Content -->
+                                <span v-if="optimiseMessage"
+                                    class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ optimiseMessage
+                                    }}</span>
+                                <img :src="displayValue?.url" class="w-full mb-2">
+                                <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
+                                    Original Size: {{ originalBytes }} Bytes
+                                </p>
 
-        <button :class="{ 'opacity-50 cursor-not-allowed': optimiseButtonDisable }"
-                                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                @click="optimiseImage(column_key)" :disabled="optimiseButtonDisable">Optimise</button>
-        
-        <button
-          class="focus:outline-none text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 float-right"
-          @click="onUploadNewClick"
-        >
-          Upload New
-        </button>
-      </template>
-      <template v-else>
-        <!-- Form for Upload New -->
-        <span v-if="uploadMessage" class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ uploadMessage }}</span>
-        
-        <form @submit.prevent="onUploadFormSubmit">
-          <input type="file"  ref="fileInputRef"  accept="image/*" required />
-          <button type="submit" :class="{ 'opacity-50 cursor-not-allowed': uploadButtonDisable }" class="bg-green-500 text-white px-4 py-2 rounded-lg mt-2" :disabled="uploadButtonDisable">Upload</button>
-        </form>
-      </template>
+                                <p v-if="optimisedBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
+                                    Optimised Size: {{ optimisedBytes }} Bytes
+                                </p>
+
+                                <p v-if="originalBytes  - optimisedBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
+                                    Saved Bytes: {{ originalBytes  - optimisedBytes }} Bytes
+                                </p>
+                                <!-- ... other content ... -->
+
+                                <button :class="{ 'opacity-50 cursor-not-allowed': optimiseButtonDisable }"
+                                    class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                    @click="optimiseImage(column_key)" :disabled="optimiseButtonDisable">Optimise</button>
+
+                                <button
+                                    class="focus:outline-none text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 float-right"
+                                    @click="onUploadNewClick">
+                                    Upload New
+                                </button>
+                            </template>
+                            <template v-else>
+                                <!-- Form for Upload New -->
+                                <span v-if="uploadMessage"
+                                    class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ uploadMessage
+                                    }}</span>
+
+                                <form @submit.prevent="onUploadFormSubmit">
+                                    <input type="file" ref="fileInputRef" accept="image/*" required />
+                                    <button type="submit" :class="{ 'opacity-50 cursor-not-allowed': uploadButtonDisable }"
+                                        class="bg-green-500 text-white px-4 py-2 rounded-lg mt-2"
+                                        :disabled="uploadButtonDisable">Upload</button>
+                                </form>
+                            </template>
                         </template>
                     </Modal>
                 </span>
@@ -101,8 +114,8 @@ let fileInputRef = ref(null);
 let uploadMessage = ref('');
 let uploadButtonDisable = ref(false);
 const onUploadNewClick = () => {
-      showInitialContent.value = false;
-      uploadButtonDisable.value = false;
+    showInitialContent.value = false;
+    uploadButtonDisable.value = false;
 }
 async function onUploadFormSubmit() {
     uploadButtonDisable.value = true;
@@ -110,7 +123,7 @@ async function onUploadFormSubmit() {
 
     let data =
     {
-        uploaded_file: fileInputRef.value.files[0] ,
+        uploaded_file: fileInputRef.value.files[0],
     };
     let result = await aj.post("/image.php", data);
     // if(result.data.code == 200) {
@@ -158,11 +171,13 @@ async function onUploadFormSubmit() {
             } else {
                 uploadButtonDisable.value = false;
                 uploadMessage.value = 'New Image is uploaded to webflow ';
-                setTimeout(function() {
+                setTimeout(function () {
                     modalVisible.value = !modalVisible.value;
                     showInitialContent.value = true;
                     uploadMessage.value = '';
                 }, 2000);
+                unlinkImage(result.data.outputPath);
+
             }
         }
     } else {
@@ -171,11 +186,11 @@ async function onUploadFormSubmit() {
     }
 
     //   showInitialContent.value = true;
-       
+
 }
 
 const closeModal = () => {
-    modalVisible.value = !modalVisible.value ;
+    modalVisible.value = !modalVisible.value;
     showInitialContent.value = true;
     optimiseMessage.value = '';
     uploadMessage.value = '';
@@ -236,12 +251,12 @@ async function optimiseImage(column_key: any) {
     let aj = new (ajax as any)();
     let data =
     {
-        image_url: displayValue.value.url ,
+        image_url: displayValue.value.url,
     };
     let result = await aj.post("/image.php", data);
     console.log('success optimise', result.data.url);
     if (result.data.code == 200) {
-        renderKey.value+=1;
+        renderKey.value += 1;
         displayValue.value.url = result.data.url;
         // if (result.data.extension == 'webp') {
         //     optimiseButtonDisable.value = true;
@@ -252,6 +267,7 @@ async function optimiseImage(column_key: any) {
         // }
         originalBytes.value = result.data.originalBytes;
         optimisedBytes.value = result.data.optimisedBytes;
+
         let fieldData = {};
         fieldData = { "isArchived": false, "isDraft": false, "fieldData": { [column_key]: { "url": result.data.url } } };
 
@@ -290,16 +306,30 @@ async function optimiseImage(column_key: any) {
                 return false;
             } else {
                 let diff = originalBytes.value - optimisedBytes.value;
-                if(diff > 0) {
-                optimiseMessage.value = 'Image converted to webP and ' + diff+" bytes are saved.";
+                if (diff > 0) {
+                    optimiseMessage.value = 'Image converted to webP and ' + diff + " bytes are saved.";
                 } else {
                     optimiseMessage.value = 'Image is already optimised';
                 }
+                unlinkImage(result.data.outputPath);
             }
         }
     } else {
         optimiseMessage.value = 'Something went wrong';
         optimiseButtonDisable.value = false;
+    }
+}
+
+async function unlinkImage(img: any) {
+    let aj = new (ajax as any)();
+    let data =
+    {
+        "action": "unlinkImg",
+        img_path: img,
+    };
+    let result = await aj.post("/image.php", data);
+    if (result) {
+        console.log(result);
     }
 }
 
