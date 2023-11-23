@@ -4,7 +4,10 @@
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden shadow">
                     <span class="text-gray-600 mx-2" v-if="checkItems">Selected Items : {{ checkedItems.length }}</span>
+                    <button type="button" class="absolute top-2 right-0 bg-blue-500 text-white px-4 py-2 mb-2 rounded-md"
+                        @click="removeCache">Remove Cache</button> <br />
 
+                    <span v-if="cacheRemoveSuccess" class="text-gray-50"> {{ cacheRemoveSuccess }}</span>
                     <table :class="className ? className : 'min-w-full'"
                         class="w-full text-sm text-left text-gray-500 dark:text-gray-800">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -125,13 +128,12 @@
 
                                     <td v-for="column in columns" class="break-words"
                                         :class="column.class ? column.class : ' p-4 text-sm font-normal text-gray-500 dark:text-gray-400'">
-                                        <slot :name="`cell(${column.key})`" :item="item" :index="index"> 
+                                        <slot :name="`cell(${column.key})`" :item="item" :index="index">
                                             <CellItem :column_key="column.key" :item_value="item[column.key]"
                                                 :item_id="item['item_id']" @editEvent="editHandler"
                                                 :item_type="column.item_type" :validations="column.validations"
                                                 :referenceData="referenceData" :aspectRatios="aspectRatios"
-                                                :collectionID="collectionID"
-                                                >
+                                                :collectionID="collectionID">
                                             </CellItem>
                                         </slot>
                                     </td>
@@ -168,6 +170,7 @@
     </div>
 </template>
 <script setup lang="ts">
+import ajax from "@/accessories/ajax";
 import CellItem from "@/components/custom/CellItem.vue"
 import moment from 'moment';
 const emits = defineEmits(["action", "editEvent", "sortItemsEvent"]);
@@ -187,7 +190,7 @@ const props = defineProps<{
 }>();
 
 let ckColumn = props.checkColumn ? props.checkColumn : "id";
-
+let cacheRemoveSuccess = ref('');
 let filters = ref<any>({});
 
 const handleFilterChange = (filterItem: any, event: any) => {
@@ -250,6 +253,17 @@ const allCheck = (event: any) => {
 
 const editHandler = (data: any) => {
     emits('editEvent', data);
+}
+
+async function removeCache() {
+    let aj = new (ajax as any)();
+    let result = await aj.get("/removeCache.php");
+    if (result.data.code == 200) {
+        cacheRemoveSuccess.value = 'Cached Removed Successfully';
+        setTimeout(function () {
+            cacheRemoveSuccess.value = '';
+        }, 2000);
+    }
 }
 
 defineExpose({
