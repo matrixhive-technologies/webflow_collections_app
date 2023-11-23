@@ -35,9 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $outputFolder = dirname($outputPath);
         if (!is_dir($outputFolder)) {
-            $asad =  mkdir($outputFolder, 0755, true);
+            $isFolderCreated =  mkdir($outputFolder, 0755, true);
 
-            if ($asad === false) {
+            if ($isFolderCreated === false) {
                 $error = error_get_last();
                 echo 'Failed to create directory: ' . $error['message'];
             }
@@ -148,9 +148,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $outputFolder = dirname($outputPath);
         if (!is_dir($outputFolder)) {
-            $asad =  mkdir($outputFolder, 0755, true);
+            $isFolderCreated =  mkdir($outputFolder, 0755, true);
 
-            if ($asad === false) {
+            if ($isFolderCreated === false) {
                 $error = error_get_last();
                 echo 'Failed to create directory: ' . $error['message'];
             }
