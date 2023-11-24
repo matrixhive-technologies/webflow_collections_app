@@ -37,8 +37,9 @@
                                     Optimised Size: {{ optimisedBytes }} Bytes
                                 </p>
 
-                                <p v-if="originalBytes  - optimisedBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
-                                    Saved Bytes: {{ originalBytes  - optimisedBytes }} Bytes
+                                <p v-if="originalBytes - optimisedBytes > 0"
+                                    class="mb-4 text-m font-medium text-gray-900 dark:text-white">
+                                    Saved Bytes: {{ originalBytes - optimisedBytes }} Bytes
                                 </p>
                                 <!-- ... other content ... -->
 
@@ -59,7 +60,19 @@
                                     }}</span>
 
                                 <form @submit.prevent="onUploadFormSubmit">
-                                    <input type="file" ref="fileInputRef" accept="image/*" required />
+                                    <div class="flex flex-row mb-3">
+                                        <input type="file" ref="fileInputRef" accept="image/*" required
+                                            @change="handleFileChange" />
+                                        <div v-if="imagePreview">
+                                            <img :src="imagePreview" alt="Preview" />
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-row mb-3">
+                                        <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios"
+                                            @change="setAspectRatio">
+                                        </SelectDropdown>
+                                    </div>
+
                                     <button type="submit" :class="{ 'opacity-50 cursor-not-allowed': uploadButtonDisable }"
                                         class="bg-green-500 text-white px-4 py-2 rounded-lg mt-2"
                                         :disabled="uploadButtonDisable">Upload</button>
@@ -98,6 +111,7 @@
 <script setup lang="ts">
 import ajax from "@/accessories/ajax";
 import { Modal } from "@/components/functional";
+import { SelectDropdown } from '@/components/crud'
 let editMode = ref<boolean>(false);
 
 let modalClass = 'w-[750px]';
@@ -218,6 +232,10 @@ let optimiseButtonDisable = ref(false);
 let originalBytes = ref<number>(0);
 let optimisedBytes = ref<number>(0);
 
+let selectedAspectRatio = ref<any>();
+
+let imagePreview = ref<any>();
+
 const blurHandler = (event: any) => {
     editMode.value = false;
     displayValue.value = editValue.value;
@@ -228,6 +246,30 @@ const blurHandler = (event: any) => {
         column_key: props.column_key
     });
 }
+
+const setAspectRatio = (change: any) => {
+    selectedAspectRatio.value = change.new;
+    console.log("selectedAspectRatio", selectedAspectRatio.value);
+}
+
+const handleFileChange = (event: any) => {
+    const file = event.target.files[0];
+
+    console.log("fileee", file);
+
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            console.log("reader.result", reader.result);
+            imagePreview.value = reader.result;
+        };
+
+        reader.readAsDataURL(file);
+    } else {
+        imagePreview.value = null;
+    }
+};
 
 const editClickHandler = () => {
     let editableTypes = ['PlainText', 'Option'];
