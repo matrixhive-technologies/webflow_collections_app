@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 20, 2023 at 05:37 PM
+-- Generation Time: Nov 24, 2023 at 06:12 PM
 -- Server version: 8.0.35-0ubuntu0.22.04.1
 -- PHP Version: 8.1.2-1ubuntu2.14
 
@@ -57,6 +57,21 @@ CREATE TABLE `cached_results` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `collection_aspect_ratio`
+--
+
+CREATE TABLE `collection_aspect_ratio` (
+  `id` int NOT NULL,
+  `site_id` text COLLATE utf8mb4_general_ci,
+  `collection_id` text COLLATE utf8mb4_general_ci,
+  `width` int DEFAULT NULL,
+  `height` int DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_collections`
 --
 
@@ -100,6 +115,12 @@ ALTER TABLE `cached_results`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `collection_aspect_ratio`
+--
+ALTER TABLE `collection_aspect_ratio`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `user_collections`
 --
 ALTER TABLE `user_collections`
@@ -125,6 +146,12 @@ ALTER TABLE `app_users`
 -- AUTO_INCREMENT for table `cached_results`
 --
 ALTER TABLE `cached_results`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `collection_aspect_ratio`
+--
+ALTER TABLE `collection_aspect_ratio`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
