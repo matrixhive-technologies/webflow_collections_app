@@ -189,15 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $extension = pathinfo($_REQUEST['image_url'], PATHINFO_EXTENSION);
 
-        if ($extension == 'webp') {
-            echo json_encode([
-                'code' => 200,
-                'url' => $_REQUEST['image_url'],
-                'optimisedBytes' => 0,
-                'originalBytes'  => 0
-            ]);
-            return false;
-        }
         // Download the image content
         $imageContent = file_get_contents($_REQUEST['image_url']);
         if ($imageContent) {
@@ -216,6 +207,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'gif':
                 $image = imagecreatefromgif($_REQUEST['image_url']);
                 break;
+            case 'webp':
+                if (!empty($_REQUEST['aspectRatio'])) {
+                    list($actualWidth, $actualHeight) = getimagesize($_REQUEST['image_url']);
+                    $actualAspectRatio = $actualWidth / $actualHeight;
+
+                    $aspectRatioArr = explode('/', $_REQUEST['aspectRatio']);
+                    $selectedWidth  = $aspectRatioArr[0];
+                    $selectedHeight = $aspectRatioArr[1];
+
+                    $selectedAspectRatio = $selectedWidth / $selectedHeight;
+                    if ($actualAspectRatio ==  $selectedAspectRatio) {
+                        echo json_encode([
+                            'code' => 200,
+                            'url' => $_REQUEST['image_url'],
+                            'optimisedBytes' => 0,
+                            'originalBytes'  => 0
+                        ]);
+                        exit();
+                    } else {
+                        $image = imagecreatefromwebp($_REQUEST['image_url']);
+                        break;
+                    }
+                } else {
+                    echo json_encode([
+                        'code' => 200,
+                        'url' => $_REQUEST['image_url'],
+                        'optimisedBytes' => 0,
+                        'originalBytes'  => 0
+                    ]);
+                    exit();
+                }
             default:
                 die('Unsupported image type');
         }
