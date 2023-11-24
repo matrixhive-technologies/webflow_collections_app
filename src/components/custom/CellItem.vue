@@ -63,6 +63,8 @@
                                     <div class="flex flex-row mb-3">
                                         <input type="file" ref="fileInputRef" accept="image/*" required
                                             @change="handleFileChange" />
+                                    </div>
+                                    <div class="flex flex-row mb-3">
                                         <div v-if="imagePreview">
                                             <img :src="imagePreview" alt="Preview" />
                                         </div>
@@ -138,6 +140,7 @@ async function onUploadFormSubmit() {
     let data =
     {
         uploaded_file: fileInputRef.value.files[0],
+        aspectRatio: selectedAspectRatio.value
     };
     let result = await aj.post("/image.php", data);
     // if(result.data.code == 200) {
@@ -163,6 +166,8 @@ async function onUploadFormSubmit() {
         let result2 = await aj.post("/CallApi.php", data2);
         console.log('result 2', result2);
         if (result2.status == 200) {
+            displayValue.value.url = result2.data.fieldData?.[props.column_key].url;
+
             let publishData = {};
             let itemIdsArr = [];
             itemIdsArr.push(props.item_id);
@@ -300,13 +305,13 @@ async function optimiseImage(column_key: any) {
     if (result.data.code == 200) {
         renderKey.value += 1;
         displayValue.value.url = result.data.url;
-        // if (result.data.extension == 'webp') {
-        //     optimiseButtonDisable.value = true;
-        //     optimiseMessage.value = 'Already optimised';
-        //     originalBytes.value = 0;
-        //     optimisedBytes.value = 0;
-        //     return false;
-        // }
+        if (result.data.optimisedBytes == 0) {
+            optimiseButtonDisable.value = false;
+            optimiseMessage.value = 'Already optimised';
+            originalBytes.value = 0;
+            optimisedBytes.value = 0;
+            return false;
+        }
         originalBytes.value = result.data.originalBytes;
         optimisedBytes.value = result.data.optimisedBytes;
 
@@ -325,6 +330,7 @@ async function optimiseImage(column_key: any) {
         let result2 = await aj.post("/CallApi.php", data2);
         console.log('result 2', result2);
         if (result2.status == 200) {
+            displayValue.value.url = result2.data.fieldData?.[props.column_key].url;
             let publishData = {};
             let itemIdsArr = [];
             itemIdsArr.push(props.item_id);
