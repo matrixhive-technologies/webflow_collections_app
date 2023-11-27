@@ -67,7 +67,7 @@
                                     </div>
                                     <div class="flex flex-row mb-3">
                                         <div v-if="imagePreview">
-                                            <VuePictureCropper
+                                            <VuePictureCropper 
                                                 :boxStyle="{
                                                     width: '100%',
                                                     height: '100%',
@@ -79,7 +79,7 @@
                                                 :options="{
                                                     viewMode: 1,
                                                     dragMode: 'crop',
-                                                    aspectRatio: 16 / 9 ,
+                                                    aspectRatio: selectedAspectRatio  ,
                                                 }"
                                                 
                                                 @crop="handleCrop"
@@ -88,6 +88,7 @@
                                         </div>
                                     </div>
                                     <div class="flex flex-row mb-3">
+                                        
                                         <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :value="aspectRatios && aspectRatios[0] ? aspectRatios[0].value : ''"  :options="aspectRatios"
                                             @change="setAspectRatio">
                                         </SelectDropdown>
@@ -182,10 +183,11 @@ let optimiseButtonDisable = ref(false);
 
 let originalBytes = ref<number>(0);
 let optimisedBytes = ref<number>(0);
-
-let selectedAspectRatio = ref<any>();
+let defaultRatio = (props.aspectRatios && props.aspectRatios[0] ? props.aspectRatios[0].value : (16/9));
+let selectedAspectRatio = ref<any>( defaultRatio );
 
 let imagePreview = ref<any>();
+
 
 const blurHandler = (event: any) => {
     editMode.value = false;
@@ -200,6 +202,11 @@ const blurHandler = (event: any) => {
 
 const setAspectRatio = (change: any) => {
     selectedAspectRatio.value = change.new;
+    let temp = imagePreview.value;
+    imagePreview.value = false;
+    nextTick(()=>{
+        imagePreview.value = temp;
+    })
     console.log("selectedAspectRatio", selectedAspectRatio.value);
 }
 
