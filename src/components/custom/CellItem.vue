@@ -29,6 +29,7 @@
                                     class="text-xl font-medium text-green-600 dark:text-green mb-1">{{ optimiseMessage
                                     }}</span>
                                 <img :src="displayValue?.url" class="w-full mb-2">
+                                
                                 <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
                                     Original Size: {{ originalBytes }} Bytes
                                 </p>
@@ -66,11 +67,28 @@
                                     </div>
                                     <div class="flex flex-row mb-3">
                                         <div v-if="imagePreview">
-                                            <img :src="imagePreview" alt="Preview" />
+                                            <VuePictureCropper
+                                                :boxStyle="{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    backgroundColor: '#f8f8f8',
+                                                    margin: 'auto',
+                                                }"
+                                                
+                                                :img="imagePreview"
+                                                :options="{
+                                                    viewMode: 1,
+                                                    dragMode: 'crop',
+                                                    aspectRatio: 16 / 9 ,
+                                                }"
+                                                
+                                                @crop="handleCrop"
+                                                />
+                                            <!-- <img :src="imagePreview" alt="Preview" /> -->
                                         </div>
                                     </div>
                                     <div class="flex flex-row mb-3">
-                                        <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :options="aspectRatios"
+                                        <SelectDropdown name="aspect_ratios" label="Aspect Ratios" :value="aspectRatios && aspectRatios[0] ? aspectRatios[0].value : ''"  :options="aspectRatios"
                                             @change="setAspectRatio">
                                         </SelectDropdown>
                                     </div>
@@ -111,6 +129,7 @@
 </template>
 
 <script setup lang="ts">
+import VuePictureCropper, { cropper } from 'vue-picture-cropper'
 import ajax from "@/accessories/ajax";
 import { Modal } from "@/components/functional";
 import { SelectDropdown } from '@/components/crud'
@@ -133,80 +152,7 @@ const onUploadNewClick = () => {
     showInitialContent.value = false;
     uploadButtonDisable.value = false;
 }
-async function onUploadFormSubmit() {
-    uploadButtonDisable.value = true;
-    let aj = new (ajax as any)();
 
-    let data =
-    {
-        uploaded_file: fileInputRef.value.files[0],
-        aspectRatio: selectedAspectRatio.value
-    };
-    let result = await aj.post("/image.php", data);
-    // if(result.data.code == 200) {
-    //     displayValue.value.url = result.data.url;
-    //     modalVisible.value = !modalVisible.value;
-    //     console.log('upload result',result);
-    // }
-
-    if (result.data.code == 200) {
-        displayValue.value.url = result.data.url;
-        let fieldData = {};
-        fieldData = { "isArchived": false, "isDraft": false, "fieldData": { [props.column_key]: { "url": result.data.url } } };
-
-        let data2 =
-        {
-            method: 'PATCH',
-            endPoint: "collections/" + [props.collectionID] + "/items/" + [props.item_id],
-            params: JSON.stringify(fieldData),
-        };
-
-        console.log('data2', data2);
-
-        let result2 = await aj.post("/CallApi.php", data2);
-        console.log('result 2', result2);
-        if (result2.status == 200) {
-            displayValue.value.url = result2.data.fieldData?.[props.column_key].url;
-
-            let publishData = {};
-            let itemIdsArr = [];
-            itemIdsArr.push(props.item_id);
-            publishData = { itemIds: itemIdsArr };
-
-
-            let data3 =
-            {
-                method: 'POST',
-                endPoint: "collections/" + [props.collectionID] + "/items/publish",
-                params: JSON.stringify(publishData),
-            };
-
-            let publishResult = await aj.post("/CallApi.php", data3);
-
-
-            if (publishResult.data.errors.length > 0) {
-                uploadMessage.value = publishResult.data.errors[0];
-                return false;
-            } else {
-                uploadButtonDisable.value = false;
-                uploadMessage.value = 'New Image is uploaded to webflow ';
-                setTimeout(function () {
-                    modalVisible.value = !modalVisible.value;
-                    showInitialContent.value = true;
-                    uploadMessage.value = '';
-                }, 2000);
-                unlinkImage(result.data.outputPath);
-
-            }
-        }
-    } else {
-        uploadMessage.value = 'Something went wrong';
-        uploadButtonDisable.value = false;
-    }
-
-    //   showInitialContent.value = true;
-
-}
 
 const closeModal = () => {
     modalVisible.value = !modalVisible.value;
@@ -378,6 +324,102 @@ async function unlinkImage(img: any) {
     let result = await aj.post("/image.php", data);
     if (result) {
         console.log(result);
+    }
+}
+
+const handleCrop = (event:any) => {
+    
+    
+    cropper.getFile().then((file) => {
+        console.log('File', file)
+    })
+}
+
+async function onUploadFormSubmit() {
+    uploadButtonDisable.value = true;
+    let aj = new (ajax as any)();
+    
+    cropper.getFile().then(async (file) => {
+        let data ={
+            uploaded_file: file,
+            aspectRatio: selectedAspectRatio.value
+        };
+        let result = await aj.postForm("/image.php", data);
+        if(result.data.code == 200){
+            processImageWebPResponse(result);
+          /*  emits('editEvent', {
+                item_id: props.item_id,
+                old_value: props.item_value,
+                new_value: {url: result.data.url},
+                column_key: props.column_key
+            });*/
+        }
+        
+    })
+    return false;
+}
+
+async function processImageWebPResponse(result:any){
+    let aj = new (ajax as any)();
+    if (result.data.code == 200) {
+        displayValue.value.url = result.data.url;
+        let fieldData = {};
+        fieldData = { "isArchived": false, "isDraft": true, 
+            "fieldData": { 
+                [props.column_key]: { 
+                    "url":  result.data.url 
+                } 
+            } 
+        };
+
+        let data2 =
+        {
+            method: 'PATCH',
+            endPoint: "collections/" + [props.collectionID] + "/items/" + [props.item_id],
+            params: JSON.stringify(fieldData),
+        };
+
+        console.log('data2', data2);
+
+        let result2 = await aj.post("/CallApi.php", data2);
+        console.log('result 2', result2);
+        if (result2.status == 200) {
+            displayValue.value.url = result2.data.fieldData?.[props.column_key].url;
+
+            let publishData = {};
+            let itemIdsArr = [];
+            itemIdsArr.push(props.item_id);
+            publishData = { itemIds: itemIdsArr };
+
+
+            let data3 =
+            {
+                method: 'POST',
+                endPoint: "collections/" + [props.collectionID] + "/items/publish",
+                params: JSON.stringify(publishData),
+            };
+
+            let publishResult = await aj.post("/CallApi.php", data3);
+
+
+            if (publishResult.data.errors.length > 0) {
+                uploadMessage.value = publishResult.data.errors[0];
+                return false;
+            } else {
+                uploadButtonDisable.value = false;
+                uploadMessage.value = 'New Image is uploaded to webflow ';
+                setTimeout(function () {
+                    modalVisible.value = !modalVisible.value;
+                    showInitialContent.value = true;
+                    uploadMessage.value = '';
+                }, 2000);
+                unlinkImage(result.data.outputPath);
+
+            }
+        }
+    } else {
+        uploadMessage.value = 'Something went wrong';
+        uploadButtonDisable.value = false;
     }
 }
 

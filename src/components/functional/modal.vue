@@ -19,10 +19,14 @@
 </template>
 
 <script setup lang="ts">
+
+
 const props = defineProps<{
     isVisible : boolean
     class? : string
 }>();
+
+
 
 const emit =  defineEmits(['close']);
 

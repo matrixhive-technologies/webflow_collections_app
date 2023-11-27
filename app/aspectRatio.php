@@ -1,6 +1,6 @@
 <?php
 require_once('config/check_session.php');
-error_reporting(1);
+
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE PATCH');
 
