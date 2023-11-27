@@ -8,7 +8,7 @@ if ($_SESSION['LoggedInUser']) {
 
     $api = new Api();
 
-
+   
     $response = $api->setEndPoint($_REQUEST['endPoint'])->setMethod($_REQUEST['method'] ?? 'GET')
         ->setAccessToken($_SESSION['LoggedInUser']['access_token'])
         ->setParams($_REQUEST['params'])
