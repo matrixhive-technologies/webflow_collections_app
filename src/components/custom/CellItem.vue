@@ -367,7 +367,7 @@ async function processImageWebPResponse(result:any){
         fieldData = { "isArchived": false, "isDraft": true, 
             "fieldData": { 
                 [props.column_key]: { 
-                    "url":  result.data.url 
+                    "url":   result.data.url 
                 } 
             } 
         };

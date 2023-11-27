@@ -80,6 +80,7 @@ class Api
     public function get()
     {
         $cachedResponse = $this->getCachedResponse();
+        
         if ($cachedResponse) {
             return $cachedResponse;
         }
