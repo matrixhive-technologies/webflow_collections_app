@@ -5,9 +5,35 @@
                 <div class="overflow-hidden shadow">
                     <span class="text-gray-600 mx-2" v-if="checkItems">Selected Items : {{ checkedItems.length }}</span>
                     <button type="button" class="absolute top-2 right-0 bg-blue-500 text-white px-4 py-2 mb-2 rounded-md"
-                        @click="removeCache">Remove Cache</button> <br />
+                        @click="confirmDelete">Remove Cache</button>
 
-                    <span v-if="cacheRemoveSuccess" class="text-gray-50"> {{ cacheRemoveSuccess }}</span>
+                    <Modal :isVisible="isDeleteConfirmationVisible" @close="cancelDelete">
+                        <template v-slot:header>
+                            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Are you sure you want to
+                                remove cache?</h3>
+                        </template>
+                        <template v-slot:modal_content>
+                            <span v-if="cacheRemoveSuccess" class="text-xl font-medium text-green-600 dark:text-green mb-1"> {{ cacheRemoveSuccess }}</span>
+
+                            <div class="mt-2 flex justify-between">
+                                <button
+                                    class="focus:outline-none text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 float-right"
+                                    @click="cancelDelete">Cancel
+                                </button>
+
+                                <button
+                                    class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                                    @click="removeCache">
+                                    Yes, Delete
+                                </button>
+
+                            </div>
+
+                        </template>
+                    </Modal>
+
+                    <br />
+
                     <table :class="className ? className : 'min-w-full'"
                         class="w-full text-sm text-left text-gray-500 dark:text-gray-800">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -173,6 +199,7 @@
 import ajax from "@/accessories/ajax";
 import CellItem from "@/components/custom/CellItem.vue"
 import moment from 'moment';
+import { Modal } from "../functional";
 const emits = defineEmits(["action", "editEvent", "sortItemsEvent"]);
 let checkedItems: any = ref<Array<any>>([]);
 const props = defineProps<{
@@ -192,6 +219,8 @@ const props = defineProps<{
 let ckColumn = props.checkColumn ? props.checkColumn : "id";
 let cacheRemoveSuccess = ref('');
 let filters = ref<any>({});
+
+let isDeleteConfirmationVisible = ref(false);
 
 const handleFilterChange = (filterItem: any, event: any) => {
     filterItem.value = event.target.value;
@@ -255,6 +284,14 @@ const editHandler = (data: any) => {
     emits('editEvent', data);
 }
 
+const confirmDelete = () => {
+    isDeleteConfirmationVisible.value = true;
+}
+
+const cancelDelete = () => {
+    isDeleteConfirmationVisible.value = !isDeleteConfirmationVisible.value;
+}
+
 async function removeCache() {
     let aj = new (ajax as any)();
     let result = await aj.get("/removeCache.php");
@@ -271,3 +308,16 @@ defineExpose({
     checkedItems
 });
 </script>
+
+<style scoped>
+.delete-confirmation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+</style>
