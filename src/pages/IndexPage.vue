@@ -142,6 +142,7 @@ ratioColumns.value =
   [
     { value: 'width', label: 'width' },
     { value: 'height', label: 'height' },
+    { value: 'aspectRatio', label: 'aspectRatio' },
   ];
 
 async function listAspectRatio(siteId: any, collectionID: any) {

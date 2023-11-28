@@ -30,13 +30,12 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-
                             <template v-if="items.length > 0" :columns="columns" v-for="item, index in items" :item="item"
                                 :index="index">
                                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <td v-for="column in columns"
                                         :class="column.class ? column.class : ' p-4 text-sm font-normal text-gray-500 dark:text-gray-400'">
-                                        {{ item[column.label] + 'px' }}
+                                        {{ item[column.label] }}
                                     </td>
 
                                     <td class="p-4 text-sm font-normal text-gray-500 dark:text-gray-400"
@@ -51,8 +50,7 @@
                                         v-if="columns.length > 0">
                                         <button
                                             class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                                            @click="$emit('deleteRatio', item.id)"
-                                            >Delete</button>
+                                            @click="$emit('deleteRatio', item.id)">Delete</button>
                                     </td>
 
 
@@ -62,7 +60,7 @@
                             </template>
                             <template v-else>
                                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
-                                    <td :colspan="columns.length + 2" class="text-center">
+                                    <td :colspan="columns.length + 3" class="text-center">
                                         <slot v-if="loading" name="loading">
                                             Loading ...
                                         </slot>
