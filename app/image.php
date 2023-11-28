@@ -26,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (isset($_FILES["uploaded_file"])) {
+        
         $file = $_FILES["uploaded_file"];
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
 
@@ -46,6 +47,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             default:
                 die('Unsupported image type');
         }
+
+       
+        $outputPath = 'uploads/' . uniqid() . '.webp';
+        $imageResponse = imagewebp($image, $outputPath);
+        $webPImageUrl = UPLOAD_PATH . $outputPath;
+        if ($imageResponse) {
+            echo json_encode([
+                'code' => 200,
+                'url' => $webPImageUrl,
+                'outputPath' => $outputPath,
+            ]);
+        } else {
+            echo json_encode(['code' => 400]);
+        }
+        exit;
 
         // Desired crop dimensions
         if (!empty($_REQUEST['aspectRatio'])) {
@@ -90,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Save the image as WebP
             $imageResponse = imagewebp($croppedImage, $outputPath);
-
+            var_dump($imageResponse);
             // Free up memory
             imagedestroy($croppedImage);
             imagedestroy($image);

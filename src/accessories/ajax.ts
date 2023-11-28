@@ -32,6 +32,19 @@ export default class ajax {
         console.log(params, "from params");
         return await axios.post(this.VUE_APP_API_URL + url, params, { headers: this.headers });
     }
+
+    async postForm(url: string, params: any) {
+        this.headers['Content-Type'] = 'multipart/form-data'
+        if (this.user.isLoggedIn) {
+            params.key = this.user.getAuthBearerHeader();
+        }
+        const form = new FormData();
+        console.log(params, "from params");
+        for(let i in params){
+            form.append(i,params[i])
+        }
+        return await axios.postForm(this.VUE_APP_API_URL + url, form, { headers: this.headers });
+    }
     async put(url: string, params: any) {
         if (this.user.isLoggedIn) {
             params.key = this.user.authToken.value;
