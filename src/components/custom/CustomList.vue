@@ -7,13 +7,16 @@
                     <button type="button" class="absolute top-2 right-0 bg-blue-500 text-white px-4 py-2 mb-2 rounded-md"
                         @click="confirmDelete" title="Click to reload collection">Load latest version</button>
 
-                    <Modal :isVisible="isDeleteConfirmationVisible" @close="cancelDelete">
+                    <Modal :isVisible="isDeleteConfirmationVisible" @close="cancelDelete" class="w-[600px]">
                         <template v-slot:header>
-                            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Are you sure you want to
-                                remove cache?</h3>
+                            <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">Are you sure?</h3>
                         </template>
                         <template v-slot:modal_content>
-                            <span v-if="cacheRemoveSuccess" class="text-xl font-medium text-green-600 dark:text-green mb-1"> {{ cacheRemoveSuccess }}</span>
+                            <span v-if="cacheRemoveSuccess" class="block text-xl font-medium text-green-600 dark:text-green mb-1"> {{ cacheRemoveSuccess }}</span>
+
+                            <span class="text-s font-medium text-gray-900 dark:text-white">
+                                This will remove the cache and load the latest version.
+                            </span>
 
                             <div class="mt-2 flex justify-between">
                                 <button
