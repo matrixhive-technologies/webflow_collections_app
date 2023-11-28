@@ -5,7 +5,7 @@
                 <div class="overflow-hidden shadow">
                     <span class="text-gray-600 mx-2" v-if="checkItems">Selected Items : {{ checkedItems.length }}</span>
                     <button type="button" class="absolute top-2 right-0 bg-blue-500 text-white px-4 py-2 mb-2 rounded-md"
-                        @click="confirmDelete">Remove Cache</button>
+                        @click="confirmDelete" title="Click to reload collection">Load latest version</button>
 
                     <Modal :isVisible="isDeleteConfirmationVisible" @close="cancelDelete">
                         <template v-slot:header>
