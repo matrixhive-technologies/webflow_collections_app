@@ -29,9 +29,8 @@
         </teleport>
 
         <CustomList :columns="visibleColumns" :items="listItems" class="table-auto" @editEvent="editHandler"
-            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates" :aspectRatios="aspectRatiosArr"
-            :collectionID="selectedCollectionId"
-            >
+            :referenceData="referenceData" @sortItemsEvent="sortItems" :showDates="showDates"
+            :aspectRatios="aspectRatiosArr" :collectionID="selectedCollectionId">
         </CustomList>
     </div>
 </template>
@@ -46,6 +45,8 @@ const props = defineProps({
     selectedSiteId: { type: Number, default: 0 },
     selectedCollectionId: { type: Number, default: 0 },
 })
+
+const emit = defineEmits(['isEdited']);
 
 let listCols = ref<Array<any>>([]);
 let checkedOptions = ref<Array<any>>([]);
@@ -71,6 +72,7 @@ onMounted(() => {
     // Check if the element exists on mount
     elementExists.value = document.body.contains(document.querySelector('#columnsDropdown'));
 });
+
 
 // watch works directly on a ref
 watch(() => props.selectedCollectionId, (first, second) => {
@@ -240,6 +242,8 @@ function editHandler(data: any) {
         editedData[data.item_id] = editedData[data.item_id] ? editedData[data.item_id] : {};
         editedData[data.item_id][data.column_key] = data.new_value;
         editedCount.value = Object.keys(editedData).length;
+        emit('isEdited', editedCount.value);
+
     }
 }
 
@@ -320,6 +324,7 @@ async function updateCollectionList() {
     window.setTimeout(function () {
         editMessage.value = '';
         editedCount.value = 0;
+        emit("isEdited", editedCount.value);
     }, 3000);
     console.log('Updated Data pushed', updateData);
 

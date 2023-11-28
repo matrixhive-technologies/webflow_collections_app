@@ -186,6 +186,16 @@ async function deleteRatio(item_id: any) {
   }
 }
 
+let disableOption = ref(false);
+const checkEdited = (editedCount: any) => {
+  console.log('edited count', editedCount);
+  if (editedCount > 0) {
+    disableOption.value = true;
+  } else {
+    disableOption.value = false;
+  }
+}
+
 
 </script>
 
@@ -254,11 +264,11 @@ async function deleteRatio(item_id: any) {
           </span>
 
 
-          <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/4">
+          <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/4" :disableOption="disableOption">
           </SelectDropdown>
 
           <SelectDropdown :options="collections" name="collections" @change="collectionChangeHandler"
-            label="Select Collection" class="w-1/4 ml-2">
+            label="Select Collection" class="w-1/4 ml-2" :disableOption="disableOption">
           </SelectDropdown>
 
           <button
@@ -270,7 +280,8 @@ async function deleteRatio(item_id: any) {
 
         </div>
 
-        <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId></CollectionEditor>
+        <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId
+          @isEdited="checkEdited"></CollectionEditor>
       </div>
     </div>
   </div>
