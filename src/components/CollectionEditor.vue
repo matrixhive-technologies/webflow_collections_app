@@ -42,7 +42,7 @@
             <span class="text-sm font-medium text-gray-900 dark:text-white mr-2">
                 Or
             </span>
-            <button
+            <button :class="{ 'cursor-not-allowed': isUpdateInProgress }" :disabled="isUpdateInProgress"
                 class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 mr-2"
                 type="button" @click="cancelEdit"> Cancel Changes </button>
 
@@ -93,6 +93,8 @@ let referenceData = ref<any>({});
 const elementExists = ref(false);
 
 const userMessageExists = ref(false);
+
+let isUpdateInProgress = ref(false);
 
 onMounted(() => {
     // Check if the element exists on mount
@@ -304,6 +306,7 @@ async function updateCollectionList() {
     console.log('collection_id', props.selectedCollectionId);
     console.log("Edited Data from update", editedData);
     let updateData = {};
+    isUpdateInProgress.value = true;
     let aj = new (ajax as any)();
     let index = 1;
     let itemIdsArr = [];
@@ -340,14 +343,17 @@ async function updateCollectionList() {
 
 
             if (publishResult.status == 200) {
+                isUpdateInProgress.value = false;
                 editMessage.value = "Updated & Published Items Successfully";
             } else {
+                isUpdateInProgress.value = false;
                 editMessage.value = "Something Went Wrong at " + i + " th record";
                 return false;
             }
             // Publish the items to site only if update is successful - ends here.
 
         } else {
+            isUpdateInProgress.value = false;
             editMessage.value = "Something Went Wrong at " + i + " th record";
             return false;
         }
