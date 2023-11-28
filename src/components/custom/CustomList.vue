@@ -34,6 +34,9 @@
 
                     <br />
 
+                    <div id="userMessage">
+
+                    </div>
                     <table :class="className ? className : 'min-w-full'"
                         class="w-full text-sm text-left text-gray-500 dark:text-gray-800">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

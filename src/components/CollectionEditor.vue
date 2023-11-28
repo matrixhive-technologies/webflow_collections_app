@@ -12,7 +12,7 @@
 
                 <div class="text-right flex ">
                     <button :class="editedCount > 0 ? '' : 'hhh'" type="button"
-                        class="w-[200px] h-[40px] ml-2 mt-[35px] items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        class="hhh w-[200px] h-[40px] ml-2 mt-[35px] items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                         @click="updateCollectionList()">
                         Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount +
                             "Records" :
@@ -25,6 +25,30 @@
                     </button>
                 </div>
             </div>
+
+        </teleport>
+
+        <teleport to="#userMessage" v-if="userMessageExists && editedCount > 0">
+            <span class="text-sm font-medium text-gray-900 dark:text-white">
+                You must
+            </span>
+            <button :class="editedCount > 0 ? '' : 'hhh'" type="button"
+                class="w-[205px] ml-2 mr-2 px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                @click="updateCollectionList()">
+                Save & Publish {{ editedCount == 1 ? editedCount + " Record" : (editedCount > 1 ? editedCount +
+                    " Records" :
+                    '') }}
+            </button>
+            <span class="text-sm font-medium text-gray-900 dark:text-white mr-2">
+                Or
+            </span>
+            <button
+                class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 mr-2"
+                type="button" @click="cancelEdit"> Cancel Changes </button>
+
+            <span class="text-sm font-medium text-gray-900 dark:text-white">
+                before changing site or collection to avoid losing any unsaved changes.
+            </span>
 
         </teleport>
 
@@ -68,10 +92,19 @@ let referenceData = ref<any>({});
 
 const elementExists = ref(false);
 
+const userMessageExists = ref(false);
+
 onMounted(() => {
     // Check if the element exists on mount
     elementExists.value = document.body.contains(document.querySelector('#columnsDropdown'));
+
+    userMessageExists.value = document.body.contains(document.querySelector('#userMessage'));
 });
+
+const cancelEdit = () => {
+    editedCount.value = 0;
+    emit('isEdited', editedCount.value);
+}
 
 
 // watch works directly on a ref
