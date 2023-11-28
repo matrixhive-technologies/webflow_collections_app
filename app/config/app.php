@@ -2,7 +2,7 @@
 
 define('ENV', 'prod');
 
-if (ENV == 'asd_local') {
+if (ENV == 'prod') {
 
     define('APP_URL', 'https://c8d6-2406-b400-d11-9862-265b-cfc3-5e88-de89.ngrok-free.app/projects/webflow_applications/webflow_collections_ui/dist/app/');
     

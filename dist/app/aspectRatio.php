@@ -22,12 +22,22 @@ if ($_REQUEST['action'] == 'list') {
     if (mysqli_num_rows($ratioExists) > 0) {
 
         while ($row = mysqli_fetch_assoc($ratioExists)) {
+            $gcd = function ($a, $b) use (&$gcd) {
+                return ($b == 0) ? $a : $gcd($b, $a % $b);
+            };
+
+            $divisor = $gcd($row['width'], $row['height']);
+            $aspectRatioWidth = $row['width'] / $divisor;
+            $aspectRatioHeight = $row['height'] / $divisor;
+
+
             $data[] = [
                 'id'            => $row['id'],
-                'width'         => $row['width'],
-                'height'        => $row['height'],
+                'width'         => $row['width'] . 'px',
+                'height'        => $row['height'] . 'px',
                 'site_id'       => $row['site_id'],
                 'collection_id' => $row['collection_id'],
+                'aspectRatio'   => $aspectRatioWidth . ':' . $aspectRatioHeight
             ];
         }
         echo json_encode(['message' => 'fetch successful', 'listData' => $data]);

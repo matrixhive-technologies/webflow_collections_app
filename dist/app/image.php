@@ -122,86 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 echo json_encode(['code' => 400]);
             }
         }
-
-        // $outputPath = 'uploads/' . uniqid() . '.webp';
-
-        // $outputFolder = dirname($outputPath);
-        // if (!is_dir($outputFolder)) {
-        //     $isFolderCreated =  mkdir($outputFolder, 0755, true);
-
-        //     if ($isFolderCreated === false) {
-        //         $error = error_get_last();
-        //         echo 'Failed to create directory: ' . $error['message'];
-        //     }
-        //     chmod($outputFolder, 0755);
-        // }
-
-        // // Save the image as WebP
-        // $imageResponse = imagewebp($image, $outputPath);
-
-        // // Free up memory
-        // imagedestroy($image);
-
-        // $webPImageUrl = UPLOAD_PATH . $outputPath;
-        // if ($imageResponse) {
-        //     echo json_encode([
-        //         'code' => 200,
-        //         'url' => $webPImageUrl,
-        //         'outputPath' => $outputPath,
-        //     ]);
-        // } else {
-        //     echo json_encode(['code' => 400]);
-        // }
-
-
-
-
-
-
-
-
-
-
-
-
-        // if ($file["error"] === UPLOAD_ERR_OK) {
-        //     $inputImagePath = $file["tmp_name"];
-
-        //     // Output image file
-        //     $targetFolder   = 'uploads/';
-        //     $targetFilename = $targetFolder . uniqid() . '.jpg';
-
-        //     // Desired crop dimensions
-        //     $cropWidth  = $_REQUEST['width'] ?? 200;
-        //     $cropHeight = $_REQUEST['height'] ?? 150;
-
-        //     // Load the image
-        //     $sourceImage = imagecreatefromjpeg($inputImagePath);
-
-        //     // Get the current dimensions of the image
-        //     $sourceWidth = imagesx($sourceImage);
-        //     $sourceHeight = imagesy($sourceImage);
-
-        //     // Calculate the crop position (centered in this example)
-        //     $cropX = ($sourceWidth - $cropWidth) / 2;
-        //     $cropY = ($sourceHeight - $cropHeight) / 2;
-
-        //     // Create a new image with the desired crop dimensions
-        //     $croppedImage = imagecreatetruecolor($cropWidth, $cropHeight);
-
-        //     // Perform the crop
-        //     imagecopy($croppedImage, $sourceImage, 0, 0, $cropX, $cropY, $cropWidth, $cropHeight);
-
-        //     // Save the cropped image
-        //     chmod($targetFolder, '0777');
-        //     imagejpeg($croppedImage, $targetFilename);
-
-        //     // Free up memory
-        //     imagedestroy($sourceImage);
-        //     imagedestroy($croppedImage);
-
-        //     echo 'Cropped image saved  and uploaded successfully to ' . $targetFilename;
-        // }
     } else {
         $extension = pathinfo($_REQUEST['image_url'], PATHINFO_EXTENSION);
 
@@ -308,11 +228,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $webPImageUrl = UPLOAD_PATH . $outputPath;
         if ($imageResponse) {
+            $originalKBs = number_format($originalBytes / 1024, 2);
+            $optimisedKBs = number_format(filesize($outputPath) / 1024, 2);
             echo json_encode([
                 'code' => 200,
                 'url' => $webPImageUrl,
-                'optimisedBytes' => filesize($outputPath),
-                'originalBytes'  => $originalBytes,
+                'optimisedBytes' => $optimisedKBs,
+                'originalBytes'  => $originalKBs,
                 'outputPath' => $outputPath
             ]);
         } else {
