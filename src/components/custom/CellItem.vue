@@ -30,16 +30,16 @@
                                     }}</span>
                                 <img :src="displayValue?.url" class="w-full mb-2">
                                 <p v-if="originalBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
-                                    Original Size: {{ originalBytes }} Bytes
+                                    Original Size: {{ originalBytes }} KBs
                                 </p>
 
                                 <p v-if="optimisedBytes > 0" class="mb-4 text-m font-medium text-gray-900 dark:text-white">
-                                    Optimised Size: {{ optimisedBytes }} Bytes
+                                    Optimised Size: {{ optimisedBytes }} KBs
                                 </p>
 
                                 <p v-if="originalBytes - optimisedBytes > 0"
                                     class="mb-4 text-m font-medium text-gray-900 dark:text-white">
-                                    Saved Bytes: {{ originalBytes - optimisedBytes }} Bytes
+                                    Saved KBs: {{ diff }} KBs
                                 </p>
                                 <!-- ... other content ... -->
 
@@ -241,6 +241,9 @@ let selectedAspectRatio = ref<any>();
 
 let imagePreview = ref<any>();
 
+let diff = ref<number>(0);
+
+
 const blurHandler = (event: any) => {
     editMode.value = false;
     displayValue.value = editValue.value;
@@ -353,9 +356,10 @@ async function optimiseImage(column_key: any) {
                 optimiseMessage.value = publishResult.data.errors[0];
                 return false;
             } else {
-                let diff = originalBytes.value - optimisedBytes.value;
-                if (diff > 0) {
-                    optimiseMessage.value = 'Image converted to webP and ' + diff + " bytes are saved.";
+                diff.value = originalBytes.value - optimisedBytes.value;
+                if (diff.value > 0) {
+                    diff.value = Number(diff.value.toFixed(2));
+                    optimiseMessage.value = 'Image converted to webP and ' + diff.value + " KBs are saved.";
                 } else {
                     optimiseMessage.value = 'Image is already optimised';
                 }
