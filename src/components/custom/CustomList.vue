@@ -37,7 +37,7 @@
 
                     <br />
 
-                    <div id="userMessage">
+                    <div id="userMessage" class="mb-2">
 
                     </div>
                     <table :class="className ? className : 'min-w-full'"
