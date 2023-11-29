@@ -183,8 +183,8 @@ let optimiseButtonDisable = ref(false);
 
 let originalBytes = ref<number>(0);
 let optimisedBytes = ref<number>(0);
-let defaultRatio = (props.aspectRatios && props.aspectRatios[0] ? props.aspectRatios[0].value : (16/9));
-let selectedAspectRatio = ref<any>( defaultRatio );
+// let defaultRatio = (props.aspectRatios && props.aspectRatios[0] ? props.aspectRatios[0].value : (16/9));
+let selectedAspectRatio = ref<any>();
 
 let imagePreview = ref<any>();
 

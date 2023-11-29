@@ -385,7 +385,7 @@ async function listAspectRatio() {
     if (result.status == 200) {
         savedRatios.value = result.data.listData;
         for (let i in savedRatios.value) {
-            aspectRatiosArr.value.push({ 'value': (parseFloat(savedRatios.value[i].width) /  parseFloat(savedRatios.value[i].height)).toFixed(2), 'label': "Width:" + savedRatios.value[i].width + "px" + " Height:" + savedRatios.value[i].height + "px" });
+            aspectRatiosArr.value.push({ 'value': savedRatios.value[i].aspectRatio, 'label': savedRatios.value[i].aspectRatio });
         }
     }
 
