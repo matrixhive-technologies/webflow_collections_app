@@ -94,6 +94,10 @@
                                         </SelectDropdown>
                                     </div>
 
+                                    <div class="flex flex-row mb-3">
+                                        <Text name="max_width" label="Enter Max Width (Enter Numeric value)" placeholder="200px..."></Text>
+                                    </div>
+
                                     <button type="submit" :class="{ 'opacity-50 cursor-not-allowed': uploadButtonDisable }"
                                         class="bg-green-500 text-white px-4 py-2 rounded-lg mt-2"
                                         :disabled="uploadButtonDisable">Upload</button>
