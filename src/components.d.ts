@@ -27,6 +27,7 @@ declare module 'vue' {
     Grid: typeof import('./components/functional/grid/Grid.vue')['default']
     Header: typeof import('./components/functional/chat/partials/header.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
+    ImageCellItem: typeof import('./components/custom/ImageCellItem.vue')['default']
     LinkButton: typeof import('./components/functional/buttons/LinkButton.vue')['default']
     List: typeof import('./components/crud/list.vue')['default']
     ListItem: typeof import('./components/crud/list-item.vue')['default']

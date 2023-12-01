@@ -115,6 +115,7 @@ window.setInterval(function () {
 
 async function saveAspectRatio(data: any) {
   let aj = new (ajax as any)();
+  data.collection_id = 0;
   data.selectedSiteId = selectedSiteId.value;
   data.action = "save";
   let result = await aj.post("/aspectRatio.php", data);
@@ -129,11 +130,13 @@ async function saveAspectRatio(data: any) {
 function closeModal() {
   success.value = '';
   savedRatios.value = [];
+  userStoreObj.setAspectRatioModal(false);
   modalVisible.value = !modalVisible.value;
   collectionAspect.value = 0;
 }
 function openModal() {
   modalVisible.value = !modalVisible.value;
+  userStoreObj.setAspectRatioModal(true);
   listAspectRatio(selectedSiteId.value, selectedCollectionId.value);
   renderDrodpown.value += 1;
 }
@@ -146,6 +149,7 @@ ratioColumns.value =
   ];
 
 async function listAspectRatio(siteId: any, collectionID: any) {
+  collectionID = 0;
   let aj = new (ajax as any)();
   let data =
   {
@@ -165,6 +169,7 @@ async function listAspectRatio(siteId: any, collectionID: any) {
 }
 
 function getCollectionId(change: any) {
+  
   collectionAspect.value = change.new;
   if (collectionAspect.value) {
     listAspectRatio(selectedSiteId.value, collectionAspect.value);
@@ -215,7 +220,7 @@ const checkEdited = (editedCount: any) => {
           </button> -->
 
           <span>
-            <Modal :key="renderKey" :isVisible="modalVisible" @close="closeModal" :class="modalClass">
+            <Modal style="z-index: 99999;"  :key="renderKey" :isVisible="userStoreObj.aspectRatioModal" @close="closeModal" :class="modalClass">
               <template v-slot:header>
                 <h3 class="mb-4 text-s font-medium text-gray-900 dark:text-white">
                   {{
@@ -235,11 +240,11 @@ const checkEdited = (editedCount: any) => {
 
                   </slot>
                   <template #fields="{ refs }">
-                    <Select :key="renderDrodpown" name="collection_id" label="Select Collection"
+                    <!-- <Select :key="renderDrodpown" name="collection_id" label="Select Collection"
                       :value="collectionAspect ? collectionAspect : selectedCollectionId" :options="collections"
                       :required="true" :ref="(ele: any) => { refs.push(ele) }" error_message="Please select collection"
                       @change="getCollectionId">
-                    </Select>
+                    </Select> -->
 
 
                     <Text name="width" label="Width (Enter Numeric value)" placeholder="250px..."
@@ -272,7 +277,7 @@ const checkEdited = (editedCount: any) => {
           </SelectDropdown>
 
           <button
-            class="focus:outline-none text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 mr-2 ml-4"
+            class="hidden focus:outline-none text-white bg-blue-700  hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-900 mr-2 ml-4"
             type="button" @click="openModal" v-if="selectedSiteId && selectedCollectionId">Settings
           </button>
 

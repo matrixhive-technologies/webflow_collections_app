@@ -54,6 +54,10 @@ defineExpose({
     value
 });
 
+watch( () => props.value, ()  => {
+    value.value = props.value;
+} )
+
 watch(value, (n, o) => {
     isValid(),
         emit('change', {

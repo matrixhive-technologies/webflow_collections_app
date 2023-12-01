@@ -26,6 +26,7 @@ export default class ajax {
     }
     async post(url: string, params: any) {
         this.headers['Content-Type'] = 'multipart/form-data'
+        params = params ? params : {};
         if (this.user.isLoggedIn) {
             params.key = this.user.getAuthBearerHeader();
         }

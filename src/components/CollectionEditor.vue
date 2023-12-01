@@ -123,7 +123,12 @@ watch(() => props.selectedCollectionId, (first, second) => {
     editedCount.value = 0;
 });
 
+
+
 const userStoreObj = userStore();
+watch(() => userStoreObj.aspectRatioModal, () => {
+    listAspectRatio();
+})
 async function logout() {
     userStoreObj.removeUser();
     window.location.href = window.location.href;
@@ -378,14 +383,17 @@ async function listAspectRatio() {
     {
         action: "list",
         siteId: props.selectedSiteId,
-        collectionID: props.selectedCollectionId,
+        collectionID: 0//props.selectedCollectionId,
     };
     let result = await aj.post("/aspectRatio.php", data);
     console.log('success list', result);
     if (result.status == 200) {
         savedRatios.value = result.data.listData;
+        aspectRatiosArr.value = [];
         for (let i in savedRatios.value) {
-            aspectRatiosArr.value.push({ 'value': savedRatios.value[i].aspectRatio, 'label': savedRatios.value[i].aspectRatio });
+            let parts = savedRatios.value[i].aspectRatio.split(':');
+            let val = (parseFloat(parts[0])/parseFloat(parts[1])).toFixed(2);
+            aspectRatiosArr.value.push({ 'value': val, 'label': savedRatios.value[i].aspectRatio });
         }
     }
 

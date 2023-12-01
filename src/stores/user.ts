@@ -24,12 +24,16 @@ export const userStore = defineStore('user', () => {
     const profileUrl = ref('/src/assets/images/users/guest.png');
     const isLoggedIn = ref(false);
     const afterLoginRoute = ref('/');
+    const aspectRatioModal = ref(false);
     
     const loginRoute = ref('login');
     const getAuthBearerHeader:Function = () => {
       return   authToken.value; 
     };
 
+    const setAspectRatioModal = (flag:boolean) => {
+      aspectRatioModal.value = flag;
+    }
     const setAuthToken = ( token:string ) => {
       authToken.value = token;
     }
@@ -61,6 +65,7 @@ export const userStore = defineStore('user', () => {
     if(Object.keys(storedUser).length > 0){
       setUser(storedUser);
     }
-    return { firstName, lastName, email, password,role_id, authToken , profileUrl , isLoggedIn , afterLoginRoute ,getAuthBearerHeader , setUser , removeUser, loginRoute }
+    return { firstName, lastName, email, password,role_id, authToken , 
+      profileUrl , isLoggedIn , afterLoginRoute ,getAuthBearerHeader , setUser , removeUser, loginRoute,aspectRatioModal,setAspectRatioModal }
 
   })
