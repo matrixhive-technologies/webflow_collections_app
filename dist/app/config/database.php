@@ -1,8 +1,8 @@
 <?php
 
 $servername = "localhost";
-$username   = "root";
-$password   = "12345678";
+$username   = "rupesh";
+$password   = "Rupesh@Odoo@1";
 $dbname     = "webflow_collections_db";
 
 // Create connection
