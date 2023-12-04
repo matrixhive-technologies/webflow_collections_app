@@ -73,7 +73,21 @@ class Api
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
         header('Content-Type: application/json; charset=utf-8');
-        echo $this->response;
+        echo $this->refineErrors($this->response);
+    }
+
+    public function refineErrors($response){
+        
+        $res = json_decode($response,true);
+        if($res['errors']){
+            foreach($res['errors'] as $ind => $error) {
+                if(str_contains($error, 'MongoBulkWriteError')){
+                    $res['errors'][$ind] = "An error was encountered. Please try publishing the site and collection, reload the data and updating the image again.";
+                }
+            }
+            $response = json_encode($res);
+        }
+        return $response;
     }
 
 
