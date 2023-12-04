@@ -245,15 +245,16 @@ const checkEdited = (editedCount: any) => {
                       :required="true" :ref="(ele: any) => { refs.push(ele) }" error_message="Please select collection"
                       @change="getCollectionId">
                     </Select> -->
-
-
-                    <Text name="width" label="Width (Enter Numeric value)" placeholder="250px..."
-                      error_message="Width is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
-                    </Text>
-
-                    <Text name="height" label="Height (Enter Numeric value)" placeholder="200px..."
-                      error_message="Height is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
-                    </Text>
+                    <div class="text-white"> <label> Enter Aspect Ratio </label></div>
+                    <div class="flex">
+                      <Text name="width"  placeholder="Enter Numeric value"
+                        error_message="Width is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
+                      </Text>
+                      <span class="text-white m-2">:</span>
+                      <Text name="height"  placeholder="Enter Numeric value"
+                        error_message="Height is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
+                      </Text>
+                  </div>
 
                   </template>
                   <template #svg>
