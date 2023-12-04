@@ -229,7 +229,6 @@ class Api
         $cacheToken = $this->getCacheToken();
         $siteId = $this->getSiteID();
         $collectionId = $this->getCollectionID();
-
         $cachData = "INSERT INTO `cached_results`(`user_id`, `site_id`, `collection_id`, `cache_token`, `response`) 
                             VALUES (
                             '" . $userId . "',

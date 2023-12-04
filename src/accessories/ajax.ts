@@ -31,7 +31,12 @@ export default class ajax {
             params.key = this.user.getAuthBearerHeader();
         }
         console.log(params, "from params");
-        return await axios.post(this.VUE_APP_API_URL + url, params, { headers: this.headers });
+        let response = await axios.post(this.VUE_APP_API_URL + url, params, { headers: this.headers });
+        if(response?.data?.code == 403){
+            this.user.removeUser();
+            window.location.href = window.location.href;
+        }
+        return response;
     }
 
     async postForm(url: string, params: any) {
