@@ -33,8 +33,8 @@ export default class ajax {
         console.log(params, "from params");
         let response = await axios.post(this.VUE_APP_API_URL + url, params, { headers: this.headers });
         if(response?.data?.code == 403){
-            this.user.removeUser();
-            window.location.href = window.location.href;
+           // this.user.removeUser();
+            // window.location.href = window.location.href;
         }
         return response;
     }
