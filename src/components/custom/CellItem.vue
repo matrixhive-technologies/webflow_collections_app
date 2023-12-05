@@ -119,7 +119,7 @@ const renderedContent = computed(() => {
 
 <style scoped>
 .breakContent {
-    width: 350px;
+    width: 400px;
     /* Set your desired width */
     white-space: nowrap;
     overflow: hidden;
