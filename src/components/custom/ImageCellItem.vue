@@ -9,7 +9,7 @@
                 <template v-slot:modal_content>
                     <template v-if="showInitialContent">
                         <!-- Initial Content -->
-                        <span v-if="optimiseMessage" class="text-l font-medium text-yellow-600 dark:text-yellow mb-1">{{
+                        <span v-if="optimiseMessage" class="text-l text-yellow-400 mb-1">{{
                             optimiseMessage
                         }}</span>
                         <img :src="displayValue?.url" class="w-full mb-2">
