@@ -289,7 +289,7 @@ const checkEdited = (editedCount: any) => {
 
           <div id="columnsDropdown" class="w-1/2 ml-2"></div>
 
-          <button class="button" @click="manageUsers = true">Manage Users</button>
+          <button class=" ml-2  right-0 bg-blue-500 text-white px-4 py-2 mb-2 rounded-md" @click="manageUsers = true">Users</button>
 
         </div>
 
