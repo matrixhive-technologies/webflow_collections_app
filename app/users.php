@@ -31,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'email'      => $row['email'],
                 ];
             }
-            echo json_encode(['code' => 200, 'childUsers' => json_encode($chiledUsers)]);
+            echo json_encode(['code' => 200, 'childUsers' => $chiledUsers]);
         } else {
-            echo json_encode(['code' => 400, 'childUsers' => json_encode([])]);
+            echo json_encode(['code' => 200, 'childUsers' => []]);
         }
     }
 
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $isDeleted = mysqli_query($app_connection, $deleteUser);
 
         if ($isDeleted) {
-            echo json_encode(['message' => 'User is deleted', 'code' => 200]);
+            echo json_encode(['message' => 'User Deleted Successfully', 'code' => 200]);
         } else {
             echo json_encode(['message' => 'Error deleting user', 'code' => 400]);
         }
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (mysqli_query($connection, $updateUser)) {
-            echo json_encode(['code' => 200, 'message' => 'Child User updated Successfully']);
+            echo json_encode(['code' => 200, 'message' => 'User Updated Successfully']);
         } else {
             echo json_encode(['code' => 400, 'message' => 'Something went wrong']);
         }
