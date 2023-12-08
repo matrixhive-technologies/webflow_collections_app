@@ -31,6 +31,7 @@ declare module 'vue' {
     LinkButton: typeof import('./components/functional/buttons/LinkButton.vue')['default']
     List: typeof import('./components/crud/list.vue')['default']
     ListItem: typeof import('./components/crud/list-item.vue')['default']
+    ManageUsers: typeof import('./components/custom/ManageUsers.vue')['default']
     Modal: typeof import('./components/functional/modal.vue')['default']
     PageComponent: typeof import('./components/page/PageComponent.vue')['default']
     PageComponentContainer: typeof import('./components/page/PageComponentContainer.vue')['default']

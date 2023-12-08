@@ -6,6 +6,7 @@ import { userStore } from '@/stores/user';
 import imageUrl from '@/assets/images/PL-logo-350.png';
 
 import AspectRatio from "@/components/custom/AspectRatio.vue";
+import ManageUsers from "@/components/custom/ManageUsers.vue";
 import { Form } from "@/components/crud"
 // useRoute, useHead, and HelloWorld are automatically imported. See vite.config.ts for details.
 const route = useRoute()
@@ -39,6 +40,8 @@ let success = ref<String>('');
 
 let savedRatios = ref<Array<any>>([]);
 let ratioColumns = ref<any>();
+
+let manageUsers = ref(false);
 
 // Site Ids list
 async function listOfSites() {
@@ -169,7 +172,7 @@ async function listAspectRatio(siteId: any, collectionID: any) {
 }
 
 function getCollectionId(change: any) {
-  
+
   collectionAspect.value = change.new;
   if (collectionAspect.value) {
     listAspectRatio(selectedSiteId.value, collectionAspect.value);
@@ -207,7 +210,7 @@ const checkEdited = (editedCount: any) => {
 <template>
   <div class="dark ">
     <div class=" mx-auto py-5 px-10 min-h-screen bg-gray-900">
-      <div class="">
+      <div class="" v-if="!manageUsers">
         <div class="flex items-end">
 
           <div class=" -mt-4">
@@ -220,7 +223,8 @@ const checkEdited = (editedCount: any) => {
           </button> -->
 
           <span>
-            <Modal style="z-index: 99999;"  :key="renderKey" :isVisible="userStoreObj.aspectRatioModal" @close="closeModal" :class="modalClass">
+            <Modal style="z-index: 99999;" :key="renderKey" :isVisible="userStoreObj.aspectRatioModal" @close="closeModal"
+              :class="modalClass">
               <template v-slot:header>
                 <h3 class="mb-4 text-s font-medium text-gray-900 dark:text-white">
                   {{
@@ -247,14 +251,14 @@ const checkEdited = (editedCount: any) => {
                     </Select> -->
                     <div class="text-white"> <label> Enter Aspect Ratio </label></div>
                     <div class="flex">
-                      <Text name="width"  placeholder="Enter Numeric value"
-                        error_message="Width is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
+                      <Text name="width" placeholder="Enter Numeric value" error_message="Width is required"
+                        :required="true" :ref="(ele: any) => { refs.push(ele) }">
                       </Text>
                       <span class="text-white m-2">:</span>
-                      <Text name="height"  placeholder="Enter Numeric value"
-                        error_message="Height is required" :required="true" :ref="(ele: any) => { refs.push(ele) }">
+                      <Text name="height" placeholder="Enter Numeric value" error_message="Height is required"
+                        :required="true" :ref="(ele: any) => { refs.push(ele) }">
                       </Text>
-                  </div>
+                    </div>
 
                   </template>
                   <template #svg>
@@ -270,7 +274,8 @@ const checkEdited = (editedCount: any) => {
           </span>
 
 
-          <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/4" :disableOption="disableOption">
+          <SelectDropdown :options="sites" name="site" label="Select Site" @change="siteCollection" class="w-1/4"
+            :disableOption="disableOption">
           </SelectDropdown>
 
           <SelectDropdown :options="collections" name="collections" @change="collectionChangeHandler"
@@ -284,10 +289,17 @@ const checkEdited = (editedCount: any) => {
 
           <div id="columnsDropdown" class="w-1/2 ml-2"></div>
 
+          <button class="button" @click="manageUsers = true">Manage Users</button>
+
         </div>
 
         <CollectionEditor :selectedSiteId=selectedSiteId :selectedCollectionId=selectedCollectionId
           @isEdited="checkEdited"></CollectionEditor>
+      </div>
+      <div v-else>
+        <ManageUsers @manageCollections="manageUsers = false">
+
+        </ManageUsers>
       </div>
     </div>
   </div>
